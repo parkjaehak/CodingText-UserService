@@ -5,49 +5,55 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.userservice.userservice.service.CustomOAuth2UserService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.userservice.userservice.jwt.CustomSuccessHandler;
+import org.userservice.userservice.jwt.JwtFilter;
+import org.userservice.userservice.jwt.JwtUtil;
+import org.userservice.userservice.service.OAuth2UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2UserDetailsService OAuth2UserDetailsService;
+    private final CustomSuccessHandler customSuccessHandler;
+    private final JwtUtil jwtUtil;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        //csrf disable (cross-site request forgery)
         http
-                .csrf(AbstractHttpConfigurer::disable);
-
-        //From 로그인 방식 disable
+                .csrf(CsrfConfigurer::disable);
         http
-                .formLogin(AbstractHttpConfigurer::disable);
-
-        //HTTP Basic 인증 방식 disable
+                .formLogin(FormLoginConfigurer::disable);
         http
-                .httpBasic(AbstractHttpConfigurer::disable);
-
-        //oauth2
+                .httpBasic(HttpBasicConfigurer::disable);
         http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)));
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated());
-
-        //세션 설정 : STATELESS
+        //JWTFilter
         http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        //oauth2 관련 서비스
+        http
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(OAuth2UserDetailsService))
+                        .successHandler(customSuccessHandler));
 
         return http.build();
     }

@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto {
-    private String name;
     private String providerName;
+    private String name;
     private String role;
 }
