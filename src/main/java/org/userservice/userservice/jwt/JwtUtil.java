@@ -34,14 +34,11 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtUtil {
-
-    private static final String BEARER_PREFIX = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24L; //액세스토큰 유효시간: 24 시간
 
     @Value("${spring.jwt.secret}")
     private String secret;
     private SecretKey secretKey;
-
 
     @PostConstruct
     public void init() {
@@ -50,8 +47,7 @@ public class JwtUtil {
 
     //Authentication: JWT 생성
     public String createToken(String providerName, String role) {
-        //TODO: 쿠키 값에는 blank 삽입 불가
-        return BEARER_PREFIX + Jwts.builder()
+        return Jwts.builder()
                 .subject(providerName)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -63,20 +59,18 @@ public class JwtUtil {
     //Authorization: JWT 검증
     public String resolveTokenHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
 
+    //TODO: cookie->header 서비스나 컨트롤러 단에서 엄격하게 검증할때 사용한다. "Bearer "를 추가하여 프론트로 전달한다.
     public String resolveTokenCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("Authorization")) {
-                String bearerToken = cookie.getValue();
-                if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-                    return bearerToken.substring(7);
-                }
+                return cookie.getValue();
             }
         }
         return null;

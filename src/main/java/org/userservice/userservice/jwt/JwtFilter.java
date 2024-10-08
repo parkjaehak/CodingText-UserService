@@ -29,10 +29,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        //cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음 //TODO: 최초 쿠키, 이후에는 헤더로 받을 경우는 어떤식으로 분기처리해야하나
+        //TODO: 최초 토큰은 pass 시켜서 cookie->header 서비스에서 처리. shouldNotFilter 메서드 사용
+        //shouldNotFilter();
         //1. 토큰 추출
-        String accessToken = jwtUtil.resolveTokenCookie(request);
+        String accessToken = jwtUtil.resolveTokenHeader(request);
 
         //2. 토큰 검증
         if (accessToken != null) {
@@ -65,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             // ObjectMapper를 사용하여 SecurityExceptionDto 객체를 json 문자열로 변환
             ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writeValueAsString(new SecurityExceptionDto(message,statusCode)); //TODO: 필터 추가
+            String json = objectMapper.writeValueAsString(new SecurityExceptionDto(message, statusCode)); //TODO: 필터 추가
             response.getWriter().write(json); //json 문자열을 응답으로 작성
         } catch (IOException e) {
             throw new RuntimeException("Error while processing JSON", e);

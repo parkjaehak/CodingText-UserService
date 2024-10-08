@@ -30,7 +30,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
         //OAuth2User (인증정보)
         OAuth2UserDetails oAuth2UserDetails = (OAuth2UserDetails) authentication.getPrincipal();
         String providerName = oAuth2UserDetails.getProviderName();
@@ -42,19 +41,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //JWT 생성
         String token = jwtUtil.createToken(providerName, role);
-
         response.addCookie(createCookie("Authorization", token));
         response.sendRedirect("http://localhost:3000/");
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
         //cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-
         return cookie;
     }
 }
