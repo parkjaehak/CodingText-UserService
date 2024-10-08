@@ -46,22 +46,23 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             return null;
         }
 
-        //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬, ex) naver 12345
+        //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬, ex) naver_12345
         String providerName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
+        String role = "ROLE_USER_A"; //소셜로그인만 진행하였을 경우 모두 회원가입해야한다.
         User user = userRepository.findByProviderName(providerName);
 
         if (user == null) {
             userRepository.save(User.builder()
-                    .name(oAuth2Response.getName())
                     .providerName(providerName)
+                    .name(oAuth2Response.getName())
                     .email(oAuth2Response.getEmail())
-                    .role("ROLE_USER")
+                    .role(role)
                     .build());
 
             UserDto userDto = UserDto.builder()
-                    .name(oAuth2Response.getName())
                     .providerName(providerName)
-                    .role("ROLE_USER")
+                    .name(oAuth2Response.getName())
+                    .role(role)
                     .build();
             return new OAuth2UserDetails(userDto);
         } else {
@@ -71,8 +72,8 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
                     .build());
 
             UserDto userDto = UserDto.builder()
-                    .name(oAuth2Response.getName())
                     .providerName(user.getProviderName())
+                    .name(oAuth2Response.getName())
                     .role(user.getRole())
                     .build();
             return new OAuth2UserDetails(userDto);
