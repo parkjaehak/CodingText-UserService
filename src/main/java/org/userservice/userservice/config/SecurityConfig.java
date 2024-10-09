@@ -9,11 +9,11 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.userservice.userservice.jwt.CustomSuccessHandler;
 import org.userservice.userservice.jwt.JwtFilter;
-import org.userservice.userservice.jwt.JwtUtil;
 import org.userservice.userservice.service.OAuth2UserDetailsService;
 
 @Configuration
@@ -23,7 +23,6 @@ public class SecurityConfig {
 
     private final OAuth2UserDetailsService OAuth2UserDetailsService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final JwtUtil jwtUtil;
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -42,11 +41,13 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/","/health","/auth/convert").permitAll()
+                        .requestMatchers("/webjars/**","/error").permitAll()
+                       // .requestMatchers("/").hasRole("USER_ROLE_A")
                         .anyRequest().authenticated());
         //JWTFilter
         http
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class);
 
         //oauth2 관련 서비스
         http

@@ -15,11 +15,8 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "provider_name")
-    private String providerName; //oAuth2 provider + providerId
+    @Column(name = "user_id")
+    private String userId;  //oAuth2 provider + providerId
 
     @Column(name = "user_name")
     private String name;
