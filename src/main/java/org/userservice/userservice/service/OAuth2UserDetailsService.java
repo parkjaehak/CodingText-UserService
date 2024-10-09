@@ -62,7 +62,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             UserDto userDto = UserDto.builder()
                     .providerName(providerName)
                     .name(oAuth2Response.getName())
-                    .role(role)
+                    .role(role) //ROLE_USER_A
                     .build();
             return new OAuth2UserDetails(userDto);
         } else {
@@ -74,7 +74,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             UserDto userDto = UserDto.builder()
                     .providerName(user.getUserId())
                     .name(oAuth2Response.getName())
-                    .role(user.getRole())
+                    .role(user.getRole()) //ROLE_USER_B
                     .build();
             return new OAuth2UserDetails(userDto);
         }
