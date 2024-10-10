@@ -48,8 +48,8 @@ public class JwtUtil {
     //Authentication: JWT 생성
     public String createToken(String providerName, String role) {
         return Jwts.builder()
-                .subject(providerName)
-                .claim("role", role)
+                .subject(providerName) //AuthenticationException(AuthenticationEntryPoint 에서 검사)-> 확실하지 않음
+                .claim("role", role) //AccessDeniedException (AccessDeniedHandler 에서 검사)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(secretKey)

@@ -11,7 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.userservice.userservice.error.AccessDeniedHandlerCustom;
+import org.userservice.userservice.error.AuthenticationEntryPointCustom;
 import org.userservice.userservice.jwt.CustomSuccessHandler;
 import org.userservice.userservice.jwt.JwtFilter;
 import org.userservice.userservice.service.OAuth2UserDetailsService;
@@ -24,6 +25,8 @@ public class SecurityConfig {
     private final OAuth2UserDetailsService OAuth2UserDetailsService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JwtFilter jwtFilter;
+    private final AuthenticationEntryPointCustom authenticationEntryPointCustom;
+    private final AccessDeniedHandlerCustom accessDeniedHandlerCustom;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,6 +57,10 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(OAuth2UserDetailsService))
                         .successHandler(customSuccessHandler));
+        http.
+                exceptionHandling(authenticationManager-> authenticationManager
+                        .authenticationEntryPoint(authenticationEntryPointCustom) // 401 Error 처리, 인증과정에서 실패할 시 처리
+                        .accessDeniedHandler(accessDeniedHandlerCustom)); // 403 Error 처리, role, authority 권한 관련 에러
 
         return http.build();
     }

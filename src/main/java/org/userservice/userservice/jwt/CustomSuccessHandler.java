@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -24,6 +25,7 @@ import java.util.Iterator;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
@@ -41,8 +43,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //JWT 생성
         String token = jwtUtil.createToken(providerName, role);
+        log.info("===================SOCIAL LOGIN SUCCESS====================");
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:8080/auth/convert");
+        response.sendRedirect("http://172.16.211.57:8080/auth/convert");
     }
 
     private Cookie createCookie(String key, String value) {
