@@ -6,16 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.userservice.userservice.dto.OAuth2UserDetails;
+import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * 클래스 요약:
@@ -42,7 +38,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createToken(providerName, role);
         response.addCookie(createCookie("Authorization", token));
         // 회원가입 안 한 사용자
-        if (role.equals("ROLE_USER_A")) {
+        if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
             response.sendRedirect("http://localhost:3000/signUp");
         } else { //ROLE_USER_B
             //TODO: refresh token 추가

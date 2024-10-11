@@ -1,6 +1,7 @@
 package org.userservice.userservice.dto;
 
 import lombok.*;
+import org.userservice.userservice.domain.AuthRole;
 
 @Getter
 @Builder
@@ -9,5 +10,5 @@ import lombok.*;
 public class UserDto {
     private String providerName;
     private String name;
-    private String role;
+    private AuthRole role;
 }

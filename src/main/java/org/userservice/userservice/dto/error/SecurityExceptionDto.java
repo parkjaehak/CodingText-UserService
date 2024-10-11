@@ -1,4 +1,4 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

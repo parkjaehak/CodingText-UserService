@@ -1,8 +1,9 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.userservice.userservice.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,7 @@ public class OAuth2UserDetails implements OAuth2User {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return userDto.getRole();
+                return String.valueOf(userDto.getRole());
             }
         });
         return collection;

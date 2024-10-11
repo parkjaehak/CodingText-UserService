@@ -6,12 +6,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import org.userservice.userservice.dto.OAuth2UserDetails;
+import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 import org.userservice.userservice.dto.SignupRequest;
 import org.userservice.userservice.jwt.JwtUtil;
+import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.service.UserService;
 
 @RestController
@@ -21,6 +21,7 @@ public class AuthController {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(
@@ -43,17 +44,22 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @RequestBody SignupRequest signupRequest,
-            Authentication authentication) {
+            @RequestPart("file") MultipartFile multipartFile,
+            @CookieValue(name = "Authorization", required = false) String token,
+            HttpServletResponse response) {
 
-        //TODO: 쿠키로 전달된 토큰 검증하여 헤더로 전달
-        OAuth2UserDetails oAuth2UserDetails = (OAuth2UserDetails) authentication.getPrincipal();
-        String providerName = oAuth2UserDetails.getProviderName();
-        userService.updateUserRole(providerName, "ROLE_USER_B");
-        String newJwt = jwtUtil.createToken(providerName, "ROLE_USER_B");
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
+        }
+        authService.checkCookieTokenValid(token);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + newJwt);
+//
+//        OAuth2UserDetails oAuth2UserDetails = (OAuth2UserDetails) authentication.getPrincipal();
+//        String providerName = oAuth2UserDetails.getProviderName();
+//        userService.updateUserRole(providerName, "ROLE_USER_B");
+//        String newJwt = jwtUtil.createToken(providerName, "ROLE_USER_B");
 
-        return ResponseEntity.ok().headers(headers).body("Signup completed and new JWT issued");
+        response.addHeader("Authorization", "Bearer " + token);
+        return ResponseEntity.ok("Bearer " + token);
     }
 }

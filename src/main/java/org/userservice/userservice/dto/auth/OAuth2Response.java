@@ -1,4 +1,4 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.auth;
 
 public interface OAuth2Response {
 
