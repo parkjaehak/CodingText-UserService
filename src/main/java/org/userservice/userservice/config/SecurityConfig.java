@@ -44,8 +44,9 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/","/health","/auth/convert", "/favicon.ico", "/webjars/**","/error").permitAll()
-                        .requestMatchers("/auth/signup").hasAnyAuthority("ROLE_USER_A") //최초 로그인일 경우 ROLE_USER_A가 할당되고 이때만 signup 접근가능
+                        .requestMatchers("/", "/health", "/favicon.ico", "/webjars/**", "/error").permitAll()
+                        .requestMatchers("/auth/signup").hasAnyAuthority("ROLE_USER_A")
+                        .requestMatchers("/auth/cookie-to-header").hasAnyAuthority("ROLE_USER_B")
                         .anyRequest().authenticated());
         //JWTFilter
         http

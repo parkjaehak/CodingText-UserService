@@ -22,7 +22,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    @GetMapping("/convert")
+    @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(
             @CookieValue(name = "Authorization", required = false) String token
             , HttpServletResponse response) {
@@ -30,7 +30,7 @@ public class AuthController {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
         }
-        //TODO: 쿠키에 대한 검증
+        //TODO: 쿠키러 잔딜된 토큰 검증하여 헤더로 전달
 
 
 
@@ -45,6 +45,7 @@ public class AuthController {
             @RequestBody SignupRequest signupRequest,
             Authentication authentication) {
 
+        //TODO: 쿠키로 전달된 토큰 검증하여 헤더로 전달
         OAuth2UserDetails oAuth2UserDetails = (OAuth2UserDetails) authentication.getPrincipal();
         String providerName = oAuth2UserDetails.getProviderName();
         userService.updateUserRole(providerName, "ROLE_USER_B");
