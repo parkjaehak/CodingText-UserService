@@ -36,16 +36,19 @@ public class User extends BaseEntity{
     private String profileUrl;
 
     @Column(name = "total_score")
-    private int totalScore; //사용자 코딩 총 점수
+    @Builder.Default
+    private Integer totalScore = 0; //사용자 코딩 총 점수
 
     @Column(name = "register_count")
-    private int registerCount; //정식 등록된 문제 수
+    @Builder.Default
+    private Integer registerCount = 0; //정식 등록된 문제 수
 
     @Column(name = "solved_count")
-    private int solvedCount; //해결한 문제 수
+    @Builder.Default
+    private Integer solvedCount = 0; //해결한 문제 수
 
     @Column(name = "day_of_birth")
-    private LocalDate dateOfBirth; //생년월일
+    private LocalDate dateOfBirth; //생년월일(2024-01-11)
 
     @Enumerated(EnumType.STRING)
     private CodeLanguage codeLanguage;

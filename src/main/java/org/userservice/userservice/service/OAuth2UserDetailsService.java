@@ -15,6 +15,8 @@ import org.userservice.userservice.dto.auth.OAuth2Response;
 import org.userservice.userservice.dto.UserDto;
 import org.userservice.userservice.repository.UserRepository;
 
+import java.time.LocalDate;
+
 /**
  * 클래스 요약:
  * OAuth2 리소스 서버에서 받은 사용자 정보(OAuth2UserRequest)를 바탕으로, 사용자 정보를 로드하고 가공하는 단계
@@ -54,8 +56,11 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         if (user == null) {
             userRepository.save(User.builder()
                     .userId(providerName)
-                    .userName(oAuth2Response.getName())
                     .email(oAuth2Response.getEmail())
+                    .userName(oAuth2Response.getName())
+                    .phoneNumber(oAuth2Response.getMobile())
+                    .profileUrl(oAuth2Response.getProfileImage())
+                    .dateOfBirth(LocalDate.parse(oAuth2Response.getBirthYear() + "-" + oAuth2Response.getBirthday()))
                     .role(AuthRole.ROLE_USER_A)
                     .build());
 
@@ -67,8 +72,9 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             return new OAuth2UserDetails(userDto);
         } else {
             userRepository.save(user.toBuilder()
-                    .userName(oAuth2Response.getName())
-                    .email(oAuth2Response.getEmail())
+                    .email(oAuth2Response.getEmail()) //이메일변경
+                    .userName(oAuth2Response.getName()) //개명
+                    .phoneNumber(oAuth2Response.getMobile()) //번호이동
                     .build());
 
             UserDto userDto = UserDto.builder()

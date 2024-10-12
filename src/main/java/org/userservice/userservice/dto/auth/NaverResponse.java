@@ -29,4 +29,29 @@ public class NaverResponse implements OAuth2Response{
     public String getName() {
         return attribute.get("name").toString();
     }
+
+    @Override
+    public String getProfileImage() {
+        return attribute.get("profile_image").toString();
+    }
+
+    @Override
+    public String getGender() {
+        return attribute.get("gender").toString();
+    }
+
+    @Override
+    public String getBirthday() {
+        return attribute.get("birthday").toString();
+    }
+
+    @Override
+    public String getBirthYear() {
+        return attribute.get("birthyear").toString();
+    }
+
+    @Override
+    public String getMobile() {
+        return attribute.get("mobile").toString();
+    }
 }

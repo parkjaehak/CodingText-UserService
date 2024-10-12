@@ -26,17 +26,16 @@ public class UserService {
                     .nickName(signupRequest.getNickname())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
-                    .profileUrl("image_url") //TODO: OAuth2UserDetailsService에서 먼저 저장을 해놓아야함
                     .build();
         } else {
-            //TODO: default 프로필 사진은 어떻게 가져올 것인지 확인
             updateUser = user.toBuilder()
                     .nickName(signupRequest.getNickname())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
-                    .profileUrl(null)
+                    .profileUrl(null)      //TODO: default 프로필 사진은 어떻게 가져올 것인지 확인
                     .build();
         }
+        userRepository.save(updateUser);
         return updateUser.getRole();
     }
 

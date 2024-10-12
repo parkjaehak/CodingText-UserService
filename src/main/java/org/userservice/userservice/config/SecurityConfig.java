@@ -45,8 +45,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/health", "/favicon.ico", "/webjars/**", "/error").permitAll()
-                        .requestMatchers("/auth/signup").hasAnyAuthority("ROLE_USER_A")
-                        .requestMatchers("/auth/cookie-to-header").hasAnyAuthority("ROLE_USER_B")
+                        .requestMatchers("/auth/signup","/auth/cookie-to-header").permitAll()
                         .anyRequest().authenticated());
         //JWTFilter
         http

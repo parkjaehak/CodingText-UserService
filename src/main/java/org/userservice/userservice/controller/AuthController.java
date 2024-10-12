@@ -36,6 +36,8 @@ public class AuthController {
         if (!jwtUtil.validateToken(token)) {
             jwtFilter.jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
         }
+        //TODO: role b인지 여부 검증
+
         // 응답 헤더에 토큰을 추가
         response.addHeader("Authorization", "Bearer " + token);
         return ResponseEntity.ok("Bearer " + token);
@@ -44,7 +46,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @RequestBody SignupRequest signupRequest,
-            @RequestPart("file") MultipartFile multipartFile,
             @CookieValue(name = "Authorization", required = false) String token,
             HttpServletResponse response) {
 
@@ -56,6 +57,7 @@ public class AuthController {
         }
         Claims claims = jwtUtil.getUserInfoFromToken(token);
         String userId = claims.getSubject();
+        //TODO: role a 여부 검증
 
         AuthRole role = userService.signup(signupRequest, userId);
         String bearerToken = "Bearer " + jwtUtil.createToken(userId, String.valueOf(role));

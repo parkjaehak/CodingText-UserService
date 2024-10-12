@@ -39,11 +39,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("Authorization", token));
         // 회원가입 안 한 사용자
         if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-            response.sendRedirect("http://localhost:3000/signUp");
+            log.info(token);
+            response.sendRedirect("http://localhost:8080/auth/signup");
         } else { //ROLE_USER_B
             //TODO: refresh token 추가
             //회원가입을 이미 했던 사용자
-            response.sendRedirect("http://localhost:3000/loginSuccess");
+            response.sendRedirect("http://localhost:8080/auth/cookie-to-header");
         }
     }
 
