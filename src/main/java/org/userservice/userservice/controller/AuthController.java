@@ -1,17 +1,19 @@
 package org.userservice.userservice.controller;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.userservice.userservice.dto.auth.OAuth2UserDetails;
+import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.SignupRequest;
+import org.userservice.userservice.dto.SignupResponse;
+import org.userservice.userservice.jwt.JwtFilter;
+import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.jwt.JwtUtil;
-import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.service.UserService;
 
 @RestController
@@ -20,8 +22,8 @@ import org.userservice.userservice.service.UserService;
 public class AuthController {
 
     private final JwtUtil jwtUtil;
+    private final JwtFilter jwtFilter;
     private final UserService userService;
-    private final AuthService authService;
 
     @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(
@@ -31,11 +33,9 @@ public class AuthController {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
         }
-        //TODO: 쿠키러 잔딜된 토큰 검증하여 헤더로 전달
-
-
-
-
+        if (!jwtUtil.validateToken(token)) {
+            jwtFilter.jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
+        }
         // 응답 헤더에 토큰을 추가
         response.addHeader("Authorization", "Bearer " + token);
         return ResponseEntity.ok("Bearer " + token);
@@ -51,15 +51,16 @@ public class AuthController {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
         }
-        authService.checkCookieTokenValid(token);
+        if (!jwtUtil.validateToken(token)) {
+            jwtFilter.jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
+        }
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        String userId = claims.getSubject();
 
-//
-//        OAuth2UserDetails oAuth2UserDetails = (OAuth2UserDetails) authentication.getPrincipal();
-//        String providerName = oAuth2UserDetails.getProviderName();
-//        userService.updateUserRole(providerName, "ROLE_USER_B");
-//        String newJwt = jwtUtil.createToken(providerName, "ROLE_USER_B");
+        AuthRole role = userService.signup(signupRequest, userId);
+        String bearerToken = "Bearer " + jwtUtil.createToken(userId, String.valueOf(role));
+        response.addHeader("Authorization", bearerToken);
 
-        response.addHeader("Authorization", "Bearer " + token);
-        return ResponseEntity.ok("Bearer " + token);
+        return ResponseEntity.ok(new SignupResponse(userId, role,  new JwtToken(bearerToken, null)));
     }
 }

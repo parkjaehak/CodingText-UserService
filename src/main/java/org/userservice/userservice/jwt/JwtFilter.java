@@ -40,12 +40,12 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             //3. 검증 성공시 인증 객체 생성
             Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
-            String providerName = claims.getSubject();
+            String userId = claims.getSubject();
             String role = claims.get("role", String.class);
 
             OAuth2UserDetails oAuth2UserDetails = new OAuth2UserDetails(
                     UserDto.builder()
-                            .providerName(providerName)
+                            .providerName(userId)
                             .role(AuthRole.fromString(role))
                             .build());
 
