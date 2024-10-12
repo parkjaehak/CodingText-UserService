@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
-import org.userservice.userservice.dto.error.SecurityExceptionDto;
+import org.userservice.userservice.dto.SecurityExceptionDto;
 
 import java.io.IOException;
 

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
-import org.userservice.userservice.dto.error.SecurityExceptionDto;
+import org.userservice.userservice.dto.SecurityExceptionDto;
 import org.userservice.userservice.dto.UserDto;
 
 import java.io.IOException;
