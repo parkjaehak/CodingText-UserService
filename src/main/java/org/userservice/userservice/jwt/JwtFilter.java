@@ -63,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             // ObjectMapper를 사용하여 SecurityExceptionDto 객체를 json 문자열로 변환
             ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writeValueAsString(new SecurityExceptionDto(message, statusCode)); //TODO: 필터 추가
+            String json = objectMapper.writeValueAsString(new SecurityExceptionDto(message, statusCode));
             response.getWriter().write(json); //json 문자열을 응답으로 작성
         } catch (IOException e) {
             throw new RuntimeException("Error while processing JSON", e);

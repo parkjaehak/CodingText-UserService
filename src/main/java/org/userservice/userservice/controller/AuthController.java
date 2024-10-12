@@ -26,43 +26,39 @@ public class AuthController {
     private final UserService userService;
 
     @GetMapping("/cookie-to-header")
-    public ResponseEntity<?> cookieToHeader(
-            @CookieValue(name = "Authorization", required = false) String token
-            , HttpServletResponse response) {
-        // 쿠키에서 JWT 토큰을 추출
+    public ResponseEntity<?> cookieToHeader(@CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
         if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
+            jwtFilter.jwtExceptionHandler(response, "AccessToken이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
         }
         if (!jwtUtil.validateToken(token)) {
             jwtFilter.jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
         }
-        //TODO: role b인지 여부 검증
-
-        // 응답 헤더에 토큰을 추가
-        response.addHeader("Authorization", "Bearer " + token);
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        String role = claims.get("role", String.class);
+        if (!role.equals(String.valueOf(AuthRole.ROLE_USER_B))) {
+            return new ResponseEntity<>("Access denied: insufficient permissions", HttpStatus.FORBIDDEN);
+        }
+        response.addHeader("Authorization", "Bearer " + token); //응답헤더에 토큰 추가
         return ResponseEntity.ok("Bearer " + token);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(
-            @RequestBody SignupRequest signupRequest,
-            @CookieValue(name = "Authorization", required = false) String token,
-            HttpServletResponse response) {
-
+    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest, @CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
         if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization cookie not found");
+            jwtFilter.jwtExceptionHandler(response, "AccessToken이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
         }
         if (!jwtUtil.validateToken(token)) {
             jwtFilter.jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
         }
         Claims claims = jwtUtil.getUserInfoFromToken(token);
         String userId = claims.getSubject();
-        //TODO: role a 여부 검증
-
-        AuthRole role = userService.signup(signupRequest, userId);
-        String bearerToken = "Bearer " + jwtUtil.createToken(userId, String.valueOf(role));
+        String role = claims.get("role", String.class);
+        if (!role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
+            return new ResponseEntity<>("Access denied: insufficient permissions", HttpStatus.FORBIDDEN);
+        }
+        AuthRole newRole = userService.signup(signupRequest, userId);
+        String bearerToken = "Bearer " + jwtUtil.createToken(userId, String.valueOf(newRole));
         response.addHeader("Authorization", bearerToken);
-
-        return ResponseEntity.ok(new SignupResponse(userId, role,  new JwtToken(bearerToken, null)));
+        return ResponseEntity.ok(new SignupResponse(userId, newRole,  new JwtToken(bearerToken, null)));
     }
 }
