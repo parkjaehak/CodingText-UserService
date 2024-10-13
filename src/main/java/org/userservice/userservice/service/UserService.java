@@ -38,13 +38,4 @@ public class UserService {
         userRepository.save(updateUser);
         return updateUser.getRole();
     }
-
-    public void updateUserRole(String userId, AuthRole role) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with provider: " + userId));
-
-        userRepository.save(user.toBuilder()
-                .role(role)
-                .build());
-    }
 }

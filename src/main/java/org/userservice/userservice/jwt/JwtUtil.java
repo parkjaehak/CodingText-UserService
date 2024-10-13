@@ -65,17 +65,6 @@ public class JwtUtil {
         return null;
     }
 
-    //TODO: cookie->header 서비스나 컨트롤러 단에서 엄격하게 검증할때 사용한다. "Bearer "를 추가하여 프론트로 전달한다.
-    public String resolveTokenCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("Authorization")) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
     public boolean validateToken(String token) {
         try {
             Jwts

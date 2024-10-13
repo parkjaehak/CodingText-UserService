@@ -16,6 +16,7 @@ import org.userservice.userservice.error.exception.UnauthorizedException;
 import org.userservice.userservice.jwt.JwtFilter;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.jwt.JwtUtil;
+import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.service.UserService;
 
 @RestController
@@ -23,42 +24,23 @@ import org.userservice.userservice.service.UserService;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(@CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
-        if (token == null) {
-            throw new UnauthenticatedException("토큰 존재하지 않습니다.");
-        }
-        if (!jwtUtil.validateToken(token)) {
-            throw new UnauthenticatedException("토큰 유효하지 않습니다.");
-        }
-        Claims claims = jwtUtil.getUserInfoFromToken(token);
-        String role = claims.get("role", String.class);
-        if (!role.equals(String.valueOf(AuthRole.ROLE_USER_B))) {
-           throw new UnauthorizedException("권한이 없는 사용자");
-        }
-        response.addHeader("Authorization", "Bearer " + token); //응답헤더에 토큰 추가
-        return ResponseEntity.ok("Bearer " + token);
+        Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_B);
+        String bearerToken = authService.createBearerToken(claims.getSubject(), AuthRole.ROLE_USER_B);
+        response.addHeader("Authorization", bearerToken);
+        return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest, @CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
-        if (token == null) {
-            throw new UnauthenticatedException("토큰 존재하지 않습니다.");
-        }
-        if (!jwtUtil.validateToken(token)) {
-            throw new UnauthenticatedException("토큰 유효하지 않습니다.");
-        }
-        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_A);
         String userId = claims.getSubject();
-        String role = claims.get("role", String.class);
-        if (!role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-            throw new UnauthorizedException("권한이 없는 사용자");
-        }
         AuthRole newRole = userService.signup(signupRequest, userId);
-        String bearerToken = "Bearer " + jwtUtil.createToken(userId, String.valueOf(newRole));
+        String bearerToken = authService.createBearerToken(userId, newRole);
         //TODO: refresh token 발급 로직 추가
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new SignupResponse(userId, newRole,  new JwtToken(bearerToken, null)));
