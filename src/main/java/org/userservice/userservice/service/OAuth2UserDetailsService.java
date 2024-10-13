@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
+import org.userservice.userservice.dto.auth.KakaoResponse;
 import org.userservice.userservice.dto.auth.GoogleResponse;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 import org.userservice.userservice.dto.auth.NaverResponse;
@@ -41,23 +42,30 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         log.info("리소스 서버로부터 인증된 유저는? = {}", oAuth2User);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        OAuth2Response oAuth2Response = null;
+        OAuth2Response oAuth2Response;
         if (registrationId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registrationId.equals("google")) {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+        } else if (registrationId.equals("kakao")) {
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
-            return null;
+            return null; //TODO: null 대신 throw error 처리
         }
 
         //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬, ex) naver_12345
         String providerName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         User user = userRepository.findById(providerName).orElse(null);
 
-        //TODO: phonenumnber null chcek
+        // TODO: phoneNumber null check 및 형식 통일 + dayOfBirth 형식 통일
         String dayOfBirth = "1900-01-01"; // 기본값 설정
         if (oAuth2Response.getBirthday() != null && oAuth2Response.getBirthYear() != null) {
-            dayOfBirth = oAuth2Response.getBirthYear() + "-" + oAuth2Response.getBirthday();
+            String birthday = oAuth2Response.getBirthday(); // MMDD 형식
+            if (birthday.length() == 4) { // 형식이 맞는지 체크
+                String month = birthday.substring(0, 2); // MM
+                String day = birthday.substring(2, 4);   // DD
+                dayOfBirth = oAuth2Response.getBirthYear() + "-" + month + "-" + day; // YYYY-MM-DD 형식으로 변환
+            }
         }
         if (user == null) {
             userRepository.save(User.builder()
