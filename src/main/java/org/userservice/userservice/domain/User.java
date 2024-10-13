@@ -48,7 +48,7 @@ public class User extends BaseEntity{
     private Integer solvedCount = 0; //해결한 문제 수
 
     @Column(name = "day_of_birth")
-    private LocalDate dateOfBirth; //생년월일(2024-01-11)
+    private LocalDate dayOfBirth; //생년월일(2024-01-11)
 
     @Enumerated(EnumType.STRING)
     private CodeLanguage codeLanguage;

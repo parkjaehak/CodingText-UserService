@@ -13,7 +13,7 @@ public interface OAuth2Response {
     //프로필이미지 url
     String getProfileImage();
     //성별(F: 여성, M: 남성, U: 확인불가)
-    String getGender();
+    String getGender(); //TODO: gender 추가 여부 확인
     //생일 (MM-DD 형식)
     String getBirthday();
     //출생연도

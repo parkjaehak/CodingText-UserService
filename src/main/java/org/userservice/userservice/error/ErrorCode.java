@@ -3,6 +3,7 @@ package org.userservice.userservice.error;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter

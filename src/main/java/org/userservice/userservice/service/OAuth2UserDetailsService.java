@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
+import org.userservice.userservice.dto.auth.GoogleResponse;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 import org.userservice.userservice.dto.auth.NaverResponse;
 import org.userservice.userservice.dto.auth.OAuth2Response;
@@ -44,7 +45,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         if (registrationId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registrationId.equals("google")) {
-            //oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+            oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         } else {
             return null;
         }
@@ -53,6 +54,11 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         String providerName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         User user = userRepository.findById(providerName).orElse(null);
 
+        //TODO: phonenumnber null chcek
+        String dayOfBirth = "1900-01-01"; // 기본값 설정
+        if (oAuth2Response.getBirthday() != null && oAuth2Response.getBirthYear() != null) {
+            dayOfBirth = oAuth2Response.getBirthYear() + "-" + oAuth2Response.getBirthday();
+        }
         if (user == null) {
             userRepository.save(User.builder()
                     .userId(providerName)
@@ -60,7 +66,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
                     .userName(oAuth2Response.getName())
                     .phoneNumber(oAuth2Response.getMobile())
                     .profileUrl(oAuth2Response.getProfileImage())
-                    .dateOfBirth(LocalDate.parse(oAuth2Response.getBirthYear() + "-" + oAuth2Response.getBirthday()))
+                    .dayOfBirth(LocalDate.parse(dayOfBirth))
                     .role(AuthRole.ROLE_USER_A)
                     .build());
 
