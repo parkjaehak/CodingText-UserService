@@ -32,7 +32,7 @@ public class GoogleResponse implements OAuth2Response {
     }
     @Override
     public String getProfileImage() {
-        return attribute.get("pictue").toString();
+        return attribute.get("picture").toString();
     }
     @Override
     public String getGender() {
