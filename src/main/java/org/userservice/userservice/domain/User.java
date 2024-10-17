@@ -55,4 +55,6 @@ public class User extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private AuthRole role;
+
+    //rank, gender
 }

@@ -86,7 +86,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             return new OAuth2UserDetails(userDto);
         } else {
             userRepository.save(user.toBuilder()
-                    .email(oAuth2Response.getEmail()) //이메일변경
+                    .email(oAuth2Response.getEmail()) //TODO: update 시에 수정하지 않는 것으로
                     .userName(oAuth2Response.getName()) //개명
                     .phoneNumber(oAuth2Response.getMobile()) //번호이동
                     .build());
