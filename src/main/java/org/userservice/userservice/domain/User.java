@@ -47,9 +47,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private Integer solvedCount = 0; //해결한 문제 수
 
-    @Column(name = "rank")
+    @Column(name = "user_rank")
     @Builder.Default
-    private Integer rank = 0; //사용자 순위
+    private Integer userRank = 0; //사용자 순위
 
     @Column(name = "day_of_birth")
     private LocalDate dayOfBirth; //생년월일(2024-01-11)

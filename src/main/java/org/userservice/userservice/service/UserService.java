@@ -48,7 +48,7 @@ public class UserService {
                 .totalScore(user.getTotalScore())
                 .registerCount(user.getRegisterCount())
                 .solvedCount(user.getSolvedCount())
-                .rank(user.getRank())
+                .rank(user.getUserRank())
                 .build();
     }
 }
