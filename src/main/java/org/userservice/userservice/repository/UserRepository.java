@@ -5,4 +5,6 @@ import org.userservice.userservice.domain.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
+    void findStatisticsByUserId(String userId);
+
 }

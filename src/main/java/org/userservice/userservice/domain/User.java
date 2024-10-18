@@ -27,7 +27,7 @@ public class User extends BaseEntity {
     private String nickName;
 
     @Column(name = "user_name")
-    private String userName; //TODO: 필요여부 파악
+    private String userName;
 
     @Column(name = "phone_number")
     private String phoneNumber;

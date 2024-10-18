@@ -3,13 +3,12 @@ package org.userservice.userservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.SignupRequest;
+import org.userservice.userservice.dto.UserStatisticResponse;
+import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +36,19 @@ public class UserService {
         }
         userRepository.save(updateUser);
         return updateUser.getRole();
+    }
+
+    public UserStatisticResponse findUserStatisticsByUserId(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
+
+        return UserStatisticResponse.builder()
+                .userId(user.getUserId())
+                .nickName(user.getNickName())
+                .totalScore(user.getTotalScore())
+                .registerCount(user.getRegisterCount())
+                .solvedCount(user.getSolvedCount())
+                .rank(user.getRank())
+                .build();
     }
 }
