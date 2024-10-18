@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.domain.Gender;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.auth.KakaoResponse;
 import org.userservice.userservice.dto.auth.GoogleResponse;
@@ -18,6 +19,7 @@ import org.userservice.userservice.dto.UserDto;
 import org.userservice.userservice.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 /**
  * 클래스 요약:
@@ -42,31 +44,15 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         log.info("리소스 서버로부터 인증된 유저는? = {}", oAuth2User);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        OAuth2Response oAuth2Response;
-        if (registrationId.equals("naver")) {
-            oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-        } else if (registrationId.equals("google")) {
-            oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-        } else if (registrationId.equals("kakao")) {
-            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
-        } else {
-            return null; //TODO: null 대신 throw error 처리
+        OAuth2Response oAuth2Response = getOAuth2Response(registrationId, oAuth2User.getAttributes());
+        if (oAuth2Response == null) {
+            throw new OAuth2AuthenticationException("Unsupported OAuth2 provider: " + registrationId);
         }
-
-        //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬, ex) naver_12345
         String providerName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         User user = userRepository.findById(providerName).orElse(null);
+        String dayOfBirth = normalizeDayOfBirth(oAuth2Response);
+        Gender genderEnum = normalizeGender(oAuth2Response);
 
-        // TODO: phoneNumber null check 및 형식 통일 + dayOfBirth 형식 통일
-        String dayOfBirth = "1900-01-01"; // 기본값 설정
-        if (oAuth2Response.getBirthday() != null && oAuth2Response.getBirthYear() != null) {
-            String birthday = oAuth2Response.getBirthday(); // MMDD 형식
-            if (birthday.length() == 4) { // 형식이 맞는지 체크
-                String month = birthday.substring(0, 2); // MM
-                String day = birthday.substring(2, 4);   // DD
-                dayOfBirth = oAuth2Response.getBirthYear() + "-" + month + "-" + day; // YYYY-MM-DD 형식으로 변환
-            }
-        }
         if (user == null) {
             userRepository.save(User.builder()
                     .userId(providerName)
@@ -76,6 +62,7 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
                     .profileUrl(oAuth2Response.getProfileImage())
                     .dayOfBirth(LocalDate.parse(dayOfBirth))
                     .role(AuthRole.ROLE_USER_A)
+                    .gender(genderEnum)
                     .build());
 
             UserDto userDto = UserDto.builder()
@@ -86,9 +73,9 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             return new OAuth2UserDetails(userDto);
         } else {
             userRepository.save(user.toBuilder()
-                    .email(oAuth2Response.getEmail()) //TODO: update 시에 수정하지 않는 것으로
-                    .userName(oAuth2Response.getName()) //개명
-                    .phoneNumber(oAuth2Response.getMobile()) //번호이동
+                    .email(oAuth2Response.getEmail())
+                    .userName(oAuth2Response.getName())
+                    .phoneNumber(oAuth2Response.getMobile())
                     .build());
 
             UserDto userDto = UserDto.builder()
@@ -98,5 +85,41 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
                     .build();
             return new OAuth2UserDetails(userDto);
         }
+    }
+
+    private OAuth2Response getOAuth2Response(String registrationId, Map<String, Object> attributes) {
+        switch (registrationId) {
+            case "naver":
+                return new NaverResponse(attributes);
+            case "google":
+                return new GoogleResponse(attributes);
+            case "kakao":
+                return new KakaoResponse(attributes);
+            default:
+                return null;
+        }
+    }
+
+    private String normalizeDayOfBirth(OAuth2Response oAuth2Response) {
+        String dayOfBirth = "1900-01-01";
+        if (oAuth2Response.getBirthday() != null && oAuth2Response.getBirthYear() != null) {
+            String birthday = oAuth2Response.getBirthday();
+            if (birthday.length() == 4) {// MMDD -> MM-DD
+                String month = birthday.substring(0, 2);
+                String day = birthday.substring(2, 4);
+                dayOfBirth = oAuth2Response.getBirthYear() + "-" + month + "-" + day; // Convert to YYYY-MM-DD
+            }
+        }
+        return dayOfBirth;
+    }
+
+    private Gender normalizeGender(OAuth2Response oAuth2Response) {
+        String gender = oAuth2Response.getGender();
+        if ("male".equals(gender) || "M".equals(gender)) {
+            return Gender.MALE;
+        } else if ("female".equals(gender) || "F".equals(gender)) {
+            return Gender.FEMALE;
+        }
+        return Gender.NONE;
     }
 }

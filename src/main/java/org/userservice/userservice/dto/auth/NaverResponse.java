@@ -37,7 +37,7 @@ public class NaverResponse implements OAuth2Response{
 
     @Override
     public String getGender() {
-        return attribute.get("gender").toString();
+        return attribute.get("gender").toString(); //F: 여성 M: 남성 U: 확인불가
     }
 
     @Override
