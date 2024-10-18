@@ -25,21 +25,21 @@ import java.io.IOException;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //1. 토큰 추출
-        String accessToken = jwtUtil.resolveTokenHeader(request);
+        String accessToken = jwtProvider.resolveTokenHeader(request);
 
         //2. 토큰 검증
         if (accessToken != null) {
-            if (!jwtUtil.validateToken(accessToken)) {
+            if (!jwtProvider.validateToken(accessToken)) {
                 jwtExceptionHandler(response, "AccessToken이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
             //3. 검증 성공시 인증 객체 생성
-            Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
+            Claims claims = jwtProvider.getUserInfoFromToken(accessToken);
             String userId = claims.getSubject();
             String role = claims.get("role", String.class);
 

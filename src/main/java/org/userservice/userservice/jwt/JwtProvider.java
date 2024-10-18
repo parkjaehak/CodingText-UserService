@@ -4,7 +4,6 @@ package org.userservice.userservice.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,7 @@ import java.util.Date;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class JwtUtil {
+public class JwtProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24L; //액세스토큰 유효시간: 24 시간
 
     @Value("${spring.jwt.secret}")

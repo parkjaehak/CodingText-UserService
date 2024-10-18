@@ -26,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -35,7 +35,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = authentication.getAuthorities().stream().findFirst().get().getAuthority();
 
         //JWT 생성
-        String token = jwtUtil.createToken(providerName, role);
+        String token = jwtProvider.createToken(providerName, role);
         response.addCookie(createCookie("Authorization", token));
         // 회원가입 안 한 사용자
         if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
