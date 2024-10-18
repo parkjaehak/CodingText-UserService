@@ -50,8 +50,8 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         }
         String providerName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         User user = userRepository.findById(providerName).orElse(null);
-        String dayOfBirth = normalizeDayOfBirth(oAuth2Response);
-        Gender genderEnum = normalizeGender(oAuth2Response);
+        String dayOfBirth = normalizeDayOfBirth(oAuth2Response.getBirthday(), oAuth2Response.getBirthYear());
+        Gender genderEnum = normalizeGender(oAuth2Response.getGender());
 
         if (user == null) {
             userRepository.save(User.builder()
@@ -100,21 +100,21 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         }
     }
 
-    private String normalizeDayOfBirth(OAuth2Response oAuth2Response) {
+    private String normalizeDayOfBirth(String birthday, String birthyear) {
         String dayOfBirth = "1900-01-01";
-        if (oAuth2Response.getBirthday() != null && oAuth2Response.getBirthYear() != null) {
-            String birthday = oAuth2Response.getBirthday();
+        if (birthday != null && birthyear != null) {
             if (birthday.length() == 4) {// MMDD -> MM-DD
                 String month = birthday.substring(0, 2);
                 String day = birthday.substring(2, 4);
-                dayOfBirth = oAuth2Response.getBirthYear() + "-" + month + "-" + day; // Convert to YYYY-MM-DD
+                dayOfBirth = birthyear + "-" + month + "-" + day;
+            } else {
+                dayOfBirth = birthyear + "-" + birthday;
             }
         }
         return dayOfBirth;
     }
 
-    private Gender normalizeGender(OAuth2Response oAuth2Response) {
-        String gender = oAuth2Response.getGender();
+    private Gender normalizeGender(String gender) {
         if ("male".equals(gender) || "M".equals(gender)) {
             return Gender.MALE;
         } else if ("female".equals(gender) || "F".equals(gender)) {

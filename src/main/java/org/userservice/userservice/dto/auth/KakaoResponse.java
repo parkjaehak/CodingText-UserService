@@ -50,6 +50,17 @@ public class KakaoResponse implements OAuth2Response {
     }
     @Override
     public String getMobile() {
-        return kakaoAccount.get("phone_number").toString(); //TODO: 형식통일(+82 00-0000-0000)
+        String phoneNumber = kakaoAccount.get("phone_number").toString();
+        // 형식 통일
+        return normalizePhoneNumber(phoneNumber);
+    }
+
+    private String normalizePhoneNumber(String phoneNumber) {
+        // 정규 표현식을 사용하여 국가 코드와 나머지 번호를 분리
+        String regex = "\\+82\\s*(10)-(\\d{4})-(\\d{4})";
+        String replacement = "010-$2-$3";
+
+        // 정규 표현식을 사용하여 변환
+        return phoneNumber.replaceAll(regex, replacement);
     }
 }
