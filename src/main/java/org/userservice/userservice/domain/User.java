@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(name = "nick_name")
-    private String nickName;
+    private String nickName; //TODO: default varchar(255)를 각 컬럼에 맞게 변경
 
     @Column(name = "user_name")
     private String userName;
@@ -34,6 +34,9 @@ public class User extends BaseEntity {
 
     @Column(name = "profile_url")
     private String profileUrl;
+
+    @Column(name = "profile_message")
+    private String profileMessage;
 
     @Column(name = "total_score")
     @Builder.Default

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.userservice.userservice.dto.UserInfoResponse;
 import org.userservice.userservice.dto.UserStatisticResponse;
 import org.userservice.userservice.service.UserService;
 import org.userservice.userservice.utils.SecurityUtils;
@@ -19,6 +20,13 @@ public class UserController {
     public ResponseEntity<UserStatisticResponse> findUserStatistics() {
         String userId = SecurityUtils.getCurrentUserId();
         UserStatisticResponse response = userService.findUserStatisticsByUserId(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/userInfo")
+    public ResponseEntity<UserInfoResponse> findUserInfos() {
+        String userId = SecurityUtils.getCurrentUserId();
+        UserInfoResponse response = userService.findUserInfoByUserId(userId);
         return ResponseEntity.ok(response);
     }
 }

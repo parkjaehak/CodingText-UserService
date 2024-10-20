@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.SignupRequest;
+import org.userservice.userservice.dto.UserInfoResponse;
 import org.userservice.userservice.dto.UserStatisticResponse;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
@@ -49,6 +50,19 @@ public class UserService {
                 .registerCount(user.getRegisterCount())
                 .solvedCount(user.getSolvedCount())
                 .rank(user.getUserRank())
+                .build();
+    }
+
+    public UserInfoResponse findUserInfoByUserId(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
+
+        return UserInfoResponse.builder()
+                .userId(user.getUserId())
+                .nickName(user.getNickName())
+                .profileUrl(user.getProfileUrl())
+                .profileMessage(user.getProfileMessage())
+                .codeLanguage(user.getCodeLanguage())
                 .build();
     }
 }
