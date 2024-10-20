@@ -1,14 +1,16 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.auth;
 
 import lombok.*;
 import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.jwt.JwtToken;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserDto {
-    private String providerName;
-    private String name;
+public class SignupResponse {
+
+    private String userId;
     private AuthRole role;
+    private JwtToken jwtToken;
 }

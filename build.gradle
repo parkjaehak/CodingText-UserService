@@ -56,6 +56,11 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	//AWS s3 (Kakao object storage와 호환)
+	implementation platform('software.amazon.awssdk:bom:2.23.7')
+	implementation 'software.amazon.awssdk:s3'
+	implementation 'ch.qos.logback:logback-classic:1.4.12' // try-catch문 Exception
+
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

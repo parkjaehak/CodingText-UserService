@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 import org.userservice.userservice.dto.SecurityExceptionDto;
-import org.userservice.userservice.dto.UserDto;
+import org.userservice.userservice.dto.auth.UserDto;
 
 import java.io.IOException;
 @Component

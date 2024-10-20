@@ -1,4 +1,4 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.user;
 
 import lombok.*;
 import org.userservice.userservice.domain.CodeLanguage;
@@ -7,9 +7,10 @@ import org.userservice.userservice.domain.CodeLanguage;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SignupRequest {
-
-    private String nickname;
+public class UserInfoResponse {
+    private String userId;
+    private String nickName;
+    private String profileUrl;
+    private String profileMessage;
     private CodeLanguage codeLanguage;
-    private Boolean useSocialProfile; //소셜 계정 프로필 사진 사용 여부
 }

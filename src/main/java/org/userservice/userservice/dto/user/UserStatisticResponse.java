@@ -1,4 +1,4 @@
-package org.userservice.userservice.dto;
+package org.userservice.userservice.dto.user;
 
 import lombok.*;
 

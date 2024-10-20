@@ -15,7 +15,7 @@ import org.userservice.userservice.dto.auth.GoogleResponse;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
 import org.userservice.userservice.dto.auth.NaverResponse;
 import org.userservice.userservice.dto.auth.OAuth2Response;
-import org.userservice.userservice.dto.UserDto;
+import org.userservice.userservice.dto.auth.UserDto;
 import org.userservice.userservice.repository.UserRepository;
 
 import java.time.LocalDate;
