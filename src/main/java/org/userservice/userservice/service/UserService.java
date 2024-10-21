@@ -72,11 +72,10 @@ public class UserService {
                 .build();
     }
 
-    public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, String userId) throws IOException {
+    public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, MultipartFile file, String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
 
-        MultipartFile file = userInfoRequest.getFile();
         String profileUrl = null;
         if (file != null) {
             //TODO: file이 없다면 default 사진이다.

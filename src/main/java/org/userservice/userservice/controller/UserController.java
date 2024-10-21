@@ -1,8 +1,10 @@
 package org.userservice.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
@@ -31,11 +33,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/userInfo")
+    @PutMapping(value = "/userInfo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoResponse> updateUserInfos(
-            @ModelAttribute UserInfoRequest userInfoRequest) throws IOException {
+            @RequestPart UserInfoRequest userInfoRequest,
+            @RequestPart MultipartFile file) {
         String userId = SecurityUtils.getCurrentUserId();
-        UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, userId);
+        UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, file, userId);
         return ResponseEntity.ok(response);
     }
 }

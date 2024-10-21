@@ -12,5 +12,4 @@ public class UserInfoRequest {
     private String nickName;
     private String profileMessage;
     private CodeLanguage codeLanguage;
-    private MultipartFile file;
 }

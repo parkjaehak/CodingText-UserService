@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 public class FileUploadService {
     private final KakaoCloudStorageConfig kakaoCloudStorageConfig;
-    private final S3Client s3Client; // S3Client를 멤버 변수로 사용
+    private final S3Client s3Client;
 
     public String saveImageFile(MultipartFile file) {
         String uploadedFileUrl;
@@ -57,7 +57,7 @@ public class FileUploadService {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }
-        return uploadedFileUrl; // 업로드된 파일의 URL 반환
+        return uploadedFileUrl;
     }
 }
 
