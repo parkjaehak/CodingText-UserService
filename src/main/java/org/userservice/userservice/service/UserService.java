@@ -29,13 +29,13 @@ public class UserService {
         if (signupRequest.getUseSocialProfile()) {
             //소셜계정의 프로필을 사용
             updateUser = user.toBuilder()
-                    .nickName(signupRequest.getNickname())
+                    .nickName(signupRequest.getNickName())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
                     .build();
         } else {
             updateUser = user.toBuilder()
-                    .nickName(signupRequest.getNickname())
+                    .nickName(signupRequest.getNickName())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
                     .profileUrl(null)      //TODO: default 프로필 사진은 어떻게 가져올 것인지 확인
@@ -78,7 +78,8 @@ public class UserService {
 
         String profileUrl = null;
         if (file != null) {
-            //TODO: file이 없다면 default 사진이다.
+            //TODO: default 사진일 경우 null
+            // 기존 url 이 들어오는 경우 덮어쓰기? 아니면 변경여부를 받아 분기를 나누어 처리?
             profileUrl = fileUploadService.saveImageFile(file);
         }
 

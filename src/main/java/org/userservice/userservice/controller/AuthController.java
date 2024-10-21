@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.SignupRequest;
@@ -15,11 +16,12 @@ import org.userservice.userservice.service.UserService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final UserService userService;
     private final AuthService authService;
 
+    @Override
     @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(@CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_B);
@@ -28,8 +30,13 @@ public class AuthController {
         return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
 
+    @Override
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest, @CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
+    public ResponseEntity<?> signup(
+            @Validated @RequestBody SignupRequest signupRequest,
+            @CookieValue(name = "Authorization", required = false) String token,
+            HttpServletResponse response) {
+
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_A);
         String userId = claims.getSubject();
         AuthRole newRole = userService.signup(signupRequest, userId);
