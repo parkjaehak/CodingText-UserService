@@ -44,7 +44,8 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/health", "/favicon.ico", "/webjars/**", "/error").permitAll()
+                        .requestMatchers("/", "/health","/webjars/**", "/favicon.ico", "/webjars/**", "/error",
+                                "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         .requestMatchers("/auth/signup","/auth/cookie-to-header").permitAll()
                         .anyRequest().authenticated());
         //JWTFilter

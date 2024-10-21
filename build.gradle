@@ -61,6 +61,10 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3'
 	implementation 'ch.qos.logback:logback-classic:1.4.12' // try-catch문 Exception
 
+	//Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
