@@ -28,8 +28,8 @@ public class FileUploadService {
         String uploadedFileUrl;
         try {
             // 임시 파일 생성
-            Path tempFilePath = Files.createTempFile(null, null);
-            Files.copy(file.getInputStream(), tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+            Path path = Files.createTempFile(null, null);
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
             // 파일 이름 생성
             String originalFilename = file.getOriginalFilename();
@@ -43,7 +43,7 @@ public class FileUploadService {
                     .bucket(kakaoCloudStorageConfig.getBucketName())
                     .key(uploadFilename)
                     .build();
-            s3Client.putObject(putObjectRequest, RequestBody.fromFile(tempFilePath));
+            s3Client.putObject(putObjectRequest, path);
 
             // 업로드된 파일의 URL 생성
             uploadedFileUrl = String.format("%s/v1/%s/%s/%s",
@@ -53,7 +53,7 @@ public class FileUploadService {
                     uploadFilename);
 
             // 임시 파일 삭제
-            Files.delete(tempFilePath);
+            Files.delete(path);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }

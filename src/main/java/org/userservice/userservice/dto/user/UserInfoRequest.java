@@ -10,7 +10,6 @@ import org.userservice.userservice.domain.CodeLanguage;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserInfoRequest {
     private String nickName;
-    private String profileUrl;
     private String profileMessage;
     private CodeLanguage codeLanguage;
     private MultipartFile file;

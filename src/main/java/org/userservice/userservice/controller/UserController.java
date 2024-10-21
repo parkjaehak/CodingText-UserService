@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/userInfo")
-    public ResponseEntity<UserInfoResponse> findUserInfos(
+    public ResponseEntity<UserInfoResponse> updateUserInfos(
             @ModelAttribute UserInfoRequest userInfoRequest) throws IOException {
         String userId = SecurityUtils.getCurrentUserId();
         UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, userId);

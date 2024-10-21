@@ -28,11 +28,10 @@ public class KakaoCloudStorageConfig {
     @Value("${cloud.kakao.object-storage.project-id}")
     private String projectId;
 
-
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .region(Region.of("kr-central-2"))
+                .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey, secretKey)))
                 .endpointOverride(URI.create(endpoint))
