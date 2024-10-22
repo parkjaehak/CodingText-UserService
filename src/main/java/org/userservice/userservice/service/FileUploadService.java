@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.userservice.userservice.config.KakaoCloudStorageConfig;
+import org.userservice.userservice.error.exception.FileUploadException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -55,7 +56,7 @@ public class FileUploadService {
             // 임시 파일 삭제
             Files.delete(path);
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+            throw new FileUploadException("파일 업로드에 실패했습니다.");
         }
         return uploadedFileUrl;
     }

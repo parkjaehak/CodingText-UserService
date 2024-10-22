@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(400, "C003", "잘못된 타입을 입력하였습니다."),
     AUTHENTICATION_NOT_FOUND(401, "C004", "인증되지 않은 사용자입니다."),
     NO_AUTHORITY(403, "C005", "권한이 없는 사용자입니다."),
+    FILE_UPLOAD_FAILED(500, "C006", "파일 업로드에 실패했습니다."),
 
     // user
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다.");
