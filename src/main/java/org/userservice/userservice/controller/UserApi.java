@@ -61,7 +61,7 @@ public interface UserApi {
                     }
                     ))
     })
-    ResponseEntity<?> findUserStatistics();
+    ResponseEntity<?> findUserStatistics(String userId);
 
     @Operation(summary = "사용자 정보 조회",
             description = "내 정보 수정 탭에서 확인할 수 있는 사용자 정보를 조회한다.")

@@ -55,15 +55,6 @@ public class JwtProvider {
                 .compact();
     }
 
-    //Authorization: JWT 검증
-    public String resolveTokenHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
     public boolean validateToken(String token) {
         try {
             Jwts

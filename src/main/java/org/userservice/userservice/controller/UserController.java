@@ -1,6 +1,7 @@
 package org.userservice.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,7 @@ import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.service.UserService;
 import org.userservice.userservice.utils.SecurityUtils;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -21,8 +22,8 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/statistics")
-    public ResponseEntity<?> findUserStatistics() {
-        String userId = SecurityUtils.getCurrentUserId();
+    public ResponseEntity<?> findUserStatistics(@RequestHeader("UserId") String userId) {
+        log.info("userId ={} ", userId);
         UserStatisticResponse response = userService.findUserStatisticsByUserId(userId);
         return ResponseEntity.ok(response);
     }

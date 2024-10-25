@@ -9,12 +9,11 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.userservice.userservice.error.AccessDeniedHandlerCustom;
 import org.userservice.userservice.error.AuthenticationEntryPointCustom;
 import org.userservice.userservice.jwt.CustomSuccessHandler;
-import org.userservice.userservice.jwt.JwtFilter;
 import org.userservice.userservice.service.OAuth2UserDetailsService;
 
 @Configuration
@@ -24,7 +23,6 @@ public class SecurityConfig {
 
     private final OAuth2UserDetailsService OAuth2UserDetailsService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final JwtFilter jwtFilter;
     private final AuthenticationEntryPointCustom authenticationEntryPointCustom;
     private final AccessDeniedHandlerCustom accessDeniedHandlerCustom;
 
@@ -44,13 +42,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/health","/webjars/**", "/favicon.ico", "/webjars/**", "/error",
+                        .requestMatchers("/webjars/**", "/favicon.ico", "/webjars/**", "/error",
                                 "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
-                        .requestMatchers("/auth/signup","/auth/cookie-to-header").permitAll()
+                        .requestMatchers("/auth/**", "users/**", "/", "/health").permitAll()
                         .anyRequest().authenticated());
-        //JWTFilter
-        http
-                .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class);
 
         //oauth2 관련 서비스
         http
