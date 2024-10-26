@@ -55,14 +55,14 @@ pipeline {
                           --env SPRING_PROFILE=dev \
                           --env CT_DB_USER=${CT_DB_USER} \
                           --env CT_DB_PASSWORD=${CT_DB_PASSWORD} \
-                          --env JWT_SECRET_KEY=${JWT_SECRET_KEY} \
+                          --env JWT_SECRET=${JWT_SECRET} \
                           --env NAVER_ID=${NAVER_ID} \
                           --env NAVER_SECRET=${NAVER_SECRET} \
                           --env GOOGLE_ID=${GOOGLE_ID} \
                           --env GOOGLE_SECRET=${GOOGLE_SECRET} \
                           --env KAKAO_ID=${KAKAO_ID} \
                           --env KAKAO_SECRET=${KAKAO_SECRET} \
-                          --env EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+                          --env EUREKA_SERVER_URL=${EUREKA_SERVER_URL} \
                           ${IMAGE_NAME}:latest
                     """
                 }
