@@ -30,8 +30,7 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/userInfo")
-    public ResponseEntity<?> findUserInfos() {
-        String userId = SecurityUtils.getCurrentUserId();
+    public ResponseEntity<?> findUserInfos(@RequestHeader("UserId") String userId) {
         UserInfoResponse response = userService.findUserInfoByUserId(userId);
         return ResponseEntity.ok(response);
     }
@@ -40,8 +39,8 @@ public class UserController implements UserApi {
     @PutMapping(value = "/userInfo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserInfos(
             @Validated @RequestPart UserInfoRequest userInfoRequest,
-            @RequestPart(required = false) MultipartFile file) {
-        String userId = SecurityUtils.getCurrentUserId();
+            @RequestPart(required = false) MultipartFile file,
+            @RequestHeader("UserId") String userId) {
         UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, file, userId);
         return ResponseEntity.ok(response);
     }

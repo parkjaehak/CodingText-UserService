@@ -81,7 +81,7 @@ public interface UserApi {
                     }
                     ))
     })
-    ResponseEntity<?> findUserInfos();
+    ResponseEntity<?> findUserInfos(String userId);
 
     @Operation(summary = "사용자 정보 수정",
             description = "내 정보 수정 탭에서 수정한 사용자 정보를 업데이트 한다.")
@@ -139,5 +139,5 @@ public interface UserApi {
                             "2. 상태 메세지 \n" +
                             "3. 기본 프로그래밍 언어", required = true) UserInfoRequest userInfoRequest,
             @Parameter(description = "4. 프로필 사진")
-            MultipartFile file);
+            MultipartFile file, String userId);
 }

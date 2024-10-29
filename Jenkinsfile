@@ -7,6 +7,7 @@ pipeline {
     environment {
         IMAGE_NAME = "atom8426/ct-userservice"  // Docker Hub ID와 리포지토리 이름
         APP_NAME = "ct-userservice-app"
+        DOCKER_COMPOSE_FILE = "/home/pjh1/spring-cloud/docker-compose.yml" // Docker Compose 파일 경로
     }
 
     stages {
@@ -47,28 +48,16 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 script {
-                    sh """
-                        docker pull ${IMAGE_NAME}:latest
-                        docker stop ${APP_NAME} || true
-                        docker rm ${APP_NAME} || true
-                        docker run -d --restart always -p 8081:8081 --name ${APP_NAME} \
-                          --env SPRING_PROFILE=dev \
-                          --env CT_DB_USER=${CT_DB_USER} \
-                          --env CT_DB_PASSWORD=${CT_DB_PASSWORD} \
-                          --env JWT_SECRET=${JWT_SECRET} \
-                          --env NAVER_ID=${NAVER_ID} \
-                          --env NAVER_SECRET=${NAVER_SECRET} \
-                          --env GOOGLE_ID=${GOOGLE_ID} \
-                          --env GOOGLE_SECRET=${GOOGLE_SECRET} \
-                          --env KAKAO_ID=${KAKAO_ID} \
-                          --env KAKAO_SECRET=${KAKAO_SECRET} \
-                          --env EUREKA_SERVER_URL=${EUREKA_SERVER_URL} \
-                          ${IMAGE_NAME}:latest
-                    """
+                   // Docker Compose를 사용하여 배포
+                   sh """
+                        docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+                        docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+                   """
                 }
             }
         }
     }
+
 
     post {
         always {
