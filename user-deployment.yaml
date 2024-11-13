@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-internal
+  namespace: user
+  labels:
+    app: user-internal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-internal
+  template:
+    metadata:
+      labels:
+        app: user-internal
+    spec:
+      serviceAccountName: user-internal
+      containers:
+        - name: user-internal
+          image: atom8426/ct-userservice:latest
+          imagePullPolicy: Always
+          restartPolicy: Always
+          ports:
+            - containerPort: 8081
+              name: http
+              protocol: TCP
+      
