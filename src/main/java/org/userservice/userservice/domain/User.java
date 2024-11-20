@@ -54,6 +54,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private Integer userRank = 0; //사용자 순위
 
+    @Enumerated(EnumType.STRING)
+    private Tier tier; //사용자 티어
+
     @Column(name = "day_of_birth")
     private LocalDate dayOfBirth; //생년월일(2024-01-11)
 

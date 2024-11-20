@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.auth.SignupRequest;
+import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
@@ -97,5 +98,9 @@ public class UserService {
                 .profileMessage(updateUser.getProfileMessage())
                 .codeLanguage(updateUser.getCodeLanguage())
                 .build();
+    }
+
+    public UserInfoForBlogResponse findUserInfoForBlogService(String userId) {
+        return userRepository.findUserInfoForBlogByUserId(userId);
     }
 }

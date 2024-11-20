@@ -44,4 +44,10 @@ public class UserController implements UserApi {
         UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, file, userId);
         return ResponseEntity.ok(response);
     }
+
+    //blog-service 와 통신
+    @GetMapping("/info")
+    public ResponseEntity<?> findUserInfoForBlogService(@RequestHeader("UserId") String userId) {
+        return ResponseEntity.ok(userService.findUserInfoForBlogService(userId));
+    }
 }

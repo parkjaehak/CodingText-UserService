@@ -5,8 +5,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "atom8426/ct-userservice"  // Docker Hub ID와 리포지토리 이름
-        APP_NAME = "ct-userservice-app"
+        IMAGE_NAME = "atom8426/ct-userservice-dev"  // Docker Hub ID와 리포지토리 이름
         DOCKER_COMPOSE_FILE = "/home/pjh1/spring-cloud/docker-compose.yml" // Docker Compose 파일 경로
     }
 

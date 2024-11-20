@@ -36,7 +36,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	//k8s
-	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
 
 	//JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	//MSA
-	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
 	//Lombok
 	compileOnly 'org.projectlombok:lombok'
