@@ -43,13 +43,15 @@ public class AuthController implements AuthApi {
 
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_A);
         String userId = claims.getSubject();
-        AuthRole newRole = userService.signup(signupRequest, userId);
-        String bearerToken = authService.createBearerToken(userId, newRole);
 
         // 블로그 생성 요청 및 응답 확인
         if (!blogServiceClient.createBlog(userId).getStatusCode().is2xxSuccessful()) {
             throw new CreationException("블로그 생성에 실패했습니다.");
         }
+
+        AuthRole newRole = userService.signup(signupRequest, userId);
+        String bearerToken = authService.createBearerToken(userId, newRole);
+
         //TODO: refresh token 발급 로직 추가
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new SignupResponse(userId, newRole,  new JwtToken(bearerToken, null)));
