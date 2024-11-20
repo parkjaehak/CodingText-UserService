@@ -101,6 +101,10 @@ public class UserService {
     }
 
     public UserInfoForBlogResponse findUserInfoForBlogService(String userId) {
-        return userRepository.findUserInfoForBlogByUserId(userId);
+        UserInfoForBlogResponse userInfo = userRepository.findUserInfoForBlogByUserId(userId);
+        if (userInfo == null) {
+            throw new UserNotFoundException("User with userId " + userId + " not found");
+        }
+        return userInfo;
     }
 }

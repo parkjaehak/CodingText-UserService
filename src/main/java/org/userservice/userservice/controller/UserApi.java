@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
@@ -140,4 +142,20 @@ public interface UserApi {
                             "3. 기본 프로그래밍 언어", required = true) UserInfoRequest userInfoRequest,
             @Parameter(description = "4. 프로필 사진")
             MultipartFile file, String userId);
+
+
+
+
+    @Operation(summary = "블로그 서비스에서 사용할 유저 정보 조회",
+            description = "블로그 서비스로부터 feign client 를 통해 요청을 받으면 해당 서비스에서 필요한 유저 정보를 전달한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공적으로 유저 정보를 조회",
+                            content = @Content(schema = @Schema(implementation = UserInfoForBlogResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    ResponseEntity<?> findUserInfoForBlogService(@RequestHeader("UserId") String userId);
+
 }
