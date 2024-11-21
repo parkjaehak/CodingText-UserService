@@ -6,7 +6,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "atom8426/ct-userservice-dev"  // Docker Hub ID와 리포지토리 이름
-        DOCKER_COMPOSE_FILE = "/home/pjh1/spring-cloud/docker-compose.yml" // Docker Compose 파일 경로
+        APP_NAME = "ct-userservice-app"
     }
 
     stages {
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     // 도커 이미지 빌드, 도커 허브로 푸시
-                    sh 'docker build --build-arg JAR_FILE=build/libs/user-0.0.1-SNAPSHOT.jar -t ${IMAGE_NAME}:latest .'
+                    sh "docker build --build-arg JAR_FILE=build/libs/user-0.0.1-SNAPSHOT.jar -t ${IMAGE_NAME}:latest ."
                     withCredentials([usernamePassword(credentialsId: 'docker_credential_id', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                         docker.withRegistry('https://index.docker.io/v1/', 'docker_credential_id') {
                             sh '''
@@ -47,16 +47,28 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 script {
-                   // Docker Compose를 사용하여 배포
-                   sh """
-                        docker-compose -f ${DOCKER_COMPOSE_FILE} pull
-                        docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
-                   """
+                    sh """
+                        docker pull ${IMAGE_NAME}:latest
+                        docker stop ${APP_NAME} || true
+                        docker rm ${APP_NAME} || true
+                        docker run -d --restart always --network host --name ${APP_NAME} \
+                          --env SPRING_PROFILE=dev \
+                          --env CT_DB_USER=${CT_DB_USER} \
+                          --env CT_DB_PASSWORD=${CT_DB_PASSWORD} \
+                          --env JWT_SECRET=${JWT_SECRET} \
+                          --env NAVER_ID=${NAVER_ID} \
+                          --env NAVER_SECRET=${NAVER_SECRET} \
+                          --env GOOGLE_ID=${GOOGLE_ID} \
+                          --env GOOGLE_SECRET=${GOOGLE_SECRET} \
+                          --env KAKAO_ID=${KAKAO_ID} \
+                          --env KAKAO_SECRET=${KAKAO_SECRET} \
+                          --env EUREKA_SERVER_URL=${EUREKA_SERVER_URL} \
+                          ${IMAGE_NAME}:latest
+                    """
                 }
             }
         }
     }
-
 
     post {
         always {
