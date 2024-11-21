@@ -163,13 +163,16 @@ public interface UserApi {
 
     @Operation(summary = "일반 사용자 공지사항 목록 조회",
             description = "일반 사용자가 공지사항 목록을 조회할 경우 관리자 서비스에 feign client 요청을 통해 페이징 된 목록을 가져온다.",
+            parameters = {
+                    @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0)", schema = @Schema(type = "integer")),
+                    @Parameter(name = "size", description = "페이지 당 데이터 개수 (기본값: 10)", schema = @Schema(type = "integer"))
+            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "공지사항목록 조회 성공",
-                            content = @Content(schema = @Schema(implementation = UserInfoForBlogResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "공지사항목록 조회 성공"),
                     @ApiResponse(responseCode = "404", description = "공지사항을 조회하지 못했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
             })
     ResponseEntity<?> getAnnouncementsFromAdminService(int page, int size);
 }
