@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/webjars/**", "/favicon.ico", "/webjars/**", "/error",
                                 "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
-                        .requestMatchers("/auth/**", "users/**", "/", "/health", "/user-service/**").permitAll()
+                        .requestMatchers("/auth/**", "users/**", "/", "/health").permitAll()
                         .anyRequest().authenticated());
 
         //oauth2 관련 서비스
