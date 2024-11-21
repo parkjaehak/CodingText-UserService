@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(name = "blogService", url = "http://localhost:8081")
+@FeignClient(name = "blog-service")
 public interface BlogServiceClient {
     @PostMapping("/blogs")
     ResponseEntity<?> createBlog(@RequestParam("userId") String userId);

@@ -1,6 +1,7 @@
 package org.userservice.userservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,13 +15,15 @@ import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
 
-import java.io.IOException;
-
 @Service
-@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
+
+    public UserService(UserRepository userRepository, @Qualifier("minio") FileUploadService fileUploadService) {
+        this.userRepository = userRepository;
+        this.fileUploadService = fileUploadService;
+    }
 
     public AuthRole signup(SignupRequest signupRequest, String userId) {
         User user = userRepository.findById(userId)
