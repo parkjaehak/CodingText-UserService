@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
@@ -158,4 +160,16 @@ public interface UserApi {
             })
     ResponseEntity<?> findUserInfoForBlogService(@RequestHeader("UserId") String userId);
 
+
+    @Operation(summary = "일반 사용자 공지사항 목록 조회",
+            description = "일반 사용자가 공지사항 목록을 조회할 경우 관리자 서비스에 feign client 요청을 통해 페이징 된 목록을 가져온다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "공지사항목록 조회 성공",
+                            content = @Content(schema = @Schema(implementation = UserInfoForBlogResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "공지사항을 조회하지 못했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    ResponseEntity<?> getAnnouncementsFromAdminService(int page, int size);
 }

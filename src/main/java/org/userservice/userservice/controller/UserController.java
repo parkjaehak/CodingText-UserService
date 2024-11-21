@@ -2,16 +2,17 @@ package org.userservice.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.service.UserService;
-import org.userservice.userservice.utils.SecurityUtils;
 
 @Slf4j
 @RestController
@@ -45,9 +46,17 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(response);
     }
 
-    //blog-service 와 통신
+    //blog-service -> user-service
     @GetMapping("/info")
     public ResponseEntity<?> findUserInfoForBlogService(@RequestHeader("UserId") String userId) {
         return ResponseEntity.ok(userService.findUserInfoForBlogService(userId));
+    }
+
+    //user-service -> admin-service
+    @GetMapping("/announce")
+    public ResponseEntity<Page<AnnounceResponse>> getAnnouncementsFromAdminService(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getAnnouncementsFromAdminService(page,size));
     }
 }

@@ -1,17 +1,22 @@
 package org.userservice.userservice.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.controller.feignclient.AdminServiceClient;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
+import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
+import org.userservice.userservice.error.ErrorCode;
+import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
 
@@ -19,6 +24,7 @@ import org.userservice.userservice.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
+    private AdminServiceClient adminServiceClient;
 
     public UserService(UserRepository userRepository, @Qualifier("minio") FileUploadService fileUploadService) {
         this.userRepository = userRepository;
@@ -83,7 +89,7 @@ public class UserService {
         String profileUrl = null;
         if (file != null) {
             //TODO: default 사진일 경우 null
-            // 기존 url 이 들어오는 경우 덮어쓰기? 아니면 변경여부를 받아 분기를 나누어 처리?
+            // 기존 이미지가 그대로라면 중복저장을 방지하기 위해 변경여부를 받아야 할 것
             profileUrl = fileUploadService.saveImageFile(file);
         }
 
@@ -109,5 +115,17 @@ public class UserService {
             throw new UserNotFoundException("User with userId " + userId + " not found");
         }
         return userInfo;
+    }
+
+    public Page<AnnounceResponse> getAnnouncementsFromAdminService(int page, int size) {
+        ResponseEntity<Page<AnnounceResponse>> response = adminServiceClient.getAnnouncements(page, size);
+
+        // 상태 코드가 200 OK인 경우
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();  // 성공 시 Page<AnnounceResponse> 반환
+        } else {
+            //관리자 서비스로부터 어떤 에러가 전달되어도 하나의 에러로 전달한다.
+            throw new BusinessException("공지사항을 조회하지 못했습니다.", ErrorCode.ANNOUNCEMENT_NOT_FOUNT);
+        }
     }
 }
