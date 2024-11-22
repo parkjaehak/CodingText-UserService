@@ -1,4 +1,4 @@
-package org.userservice.userservice.config;
+package org.userservice.userservice.dto.adminclient;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
