@@ -63,6 +63,10 @@ pipeline {
                           --env KAKAO_ID=${KAKAO_ID} \
                           --env KAKAO_SECRET=${KAKAO_SECRET} \
                           --env EUREKA_SERVER_URL=${EUREKA_SERVER_URL} \
+                          --env KAKAO_STORAGE_ACCESS_KEY=${KAKAO_STORAGE_ACCESS_KEY} \
+                          --env KAKAO_STORAGE_SECRET_KEY=${KAKAO_STORAGE_SECRET_KEY} \
+                          --env MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY} \
+                          --env MINIO_SECRET_KEY=${MINIO_SECRET_KEY} \
                           ${IMAGE_NAME}:latest
                     """
                 }
