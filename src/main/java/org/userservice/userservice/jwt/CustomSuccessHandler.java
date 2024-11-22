@@ -37,16 +37,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //JWT 생성
         String token = jwtProvider.createToken(providerName, role);
         response.addCookie(createCookie("Authorization", token));
-        // 회원가입 안 한 사용자
         if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-            log.info(token);
-            //response.sendRedirect("http://localhost:8080/auth/signup");
-            response.sendRedirect("http://172.16.211.57:19091/user-service/auth/signup");
-        } else { //ROLE_USER_B
+            response.sendRedirect("http://localhost:3000/auth/signup");
+        } else {
             //TODO: refresh token 추가
-            //회원가입을 이미 했던 사용자
-            //response.sendRedirect("http://localhost:8080/auth/cookie-to-header");
-            response.sendRedirect("http://172.16.211.57:19091/user-service/auth/cookie-to-header");
+            response.sendRedirect("http://localhost:3000/social-callback");
         }
     }
 
