@@ -15,6 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/**
+ * @삭제예정: 요구사항 수정으로 불필요한 코드
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service("kakao")

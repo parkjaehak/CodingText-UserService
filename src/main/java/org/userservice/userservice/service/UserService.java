@@ -2,13 +2,16 @@ package org.userservice.userservice.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.config.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
+import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
@@ -90,6 +93,7 @@ public class UserService {
         String profileUrl = null;
         if (file != null) {
             //TODO: default 사진일 경우 null
+            //이미지 url을 입력 받아 minio에 있으면 중복저장하지 않음
             // 기존 이미지가 그대로라면 중복저장을 방지하기 위해 변경여부를 받아야 할 것
             profileUrl = fileUploadService.saveImageFile(file);
         }
@@ -119,13 +123,22 @@ public class UserService {
     }
 
     public Page<AnnounceResponse> getAnnouncementsFromAdminService(int page, int size) {
-        ResponseEntity<Page<AnnounceResponse>> response = adminServiceClient.getAnnouncements(page, size);
+        ResponseEntity<CustomPageImpl<AnnounceResponse>> response = adminServiceClient.getAnnouncements(page, size);
 
         // 상태 코드가 200 OK인 경우
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();  // 성공 시 Page<AnnounceResponse> 반환
+            return response.getBody();
         } else {
             //관리자 서비스로부터 어떤 에러가 전달되어도 하나의 에러로 전달한다.
+            throw new BusinessException("공지사항을 조회하지 못했습니다.", ErrorCode.ANNOUNCEMENT_NOT_FOUNT);
+        }
+    }
+
+    public AnnounceDetailResponse getAnnouncementDetailsFromAdminService(long announceId) {
+        ResponseEntity<AnnounceDetailResponse> response = adminServiceClient.getAnnouncementDetails(announceId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
             throw new BusinessException("공지사항을 조회하지 못했습니다.", ErrorCode.ANNOUNCEMENT_NOT_FOUNT);
         }
     }

@@ -3,6 +3,7 @@ package org.userservice.userservice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -58,5 +59,9 @@ public class UserController implements UserApi {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getAnnouncementsFromAdminService(page,size));
+    }
+    @GetMapping("/announce/{announceId}")
+    public ResponseEntity<?> getAnnouncementDetailsFromAdminService(@PathVariable long announceId){
+        return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
     }
 }
