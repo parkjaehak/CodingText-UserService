@@ -33,7 +33,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' //활성화시 spring security의 default 비번 uuid 생성안됨
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	//k8s
 	//implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
@@ -45,6 +44,7 @@ dependencies {
 
 	//MSA
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	//Lombok
 	compileOnly 'org.projectlombok:lombok'

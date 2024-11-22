@@ -24,11 +24,12 @@ import org.userservice.userservice.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
-    private AdminServiceClient adminServiceClient;
+    private final AdminServiceClient adminServiceClient;
 
-    public UserService(UserRepository userRepository, @Qualifier("minio") FileUploadService fileUploadService) {
+    public UserService(UserRepository userRepository, @Qualifier("minio") FileUploadService fileUploadService, AdminServiceClient adminServiceClient) {
         this.userRepository = userRepository;
         this.fileUploadService = fileUploadService;
+        this.adminServiceClient = adminServiceClient;
     }
 
     public AuthRole signup(SignupRequest signupRequest, String userId) {
