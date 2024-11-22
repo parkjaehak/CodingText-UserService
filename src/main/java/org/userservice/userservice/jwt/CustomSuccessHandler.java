@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
+import org.userservice.userservice.utils.CookieUtils;
 
 import java.io.IOException;
 
@@ -36,21 +37,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //JWT 생성
         String token = jwtProvider.createToken(providerName, role);
-        response.addCookie(createCookie("Authorization", token));
+        response.addCookie(CookieUtils.createCookie("Authorization", token, 60*60*60));
         if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
             response.sendRedirect("http://localhost:3000/auth/signup");
         } else {
             //TODO: refresh token 추가
             response.sendRedirect("http://localhost:3000/social-callback");
         }
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        //cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
     }
 }

@@ -15,6 +15,7 @@ import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.service.UserService;
+import org.userservice.userservice.utils.CookieUtils;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +31,9 @@ public class AuthController implements AuthApi {
     public ResponseEntity<?> cookieToHeader(@CookieValue(name = "Authorization", required = false) String token, HttpServletResponse response) {
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_B);
         String bearerToken = authService.createBearerToken(claims.getSubject(), AuthRole.ROLE_USER_B);
+
+        // 클라이언트의 access 토큰 쿠키를 만료
+        response.addCookie(CookieUtils.createCookie("Authorization", null, 0));
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
@@ -53,6 +57,7 @@ public class AuthController implements AuthApi {
         String bearerToken = authService.createBearerToken(userId, newRole);
 
         //TODO: refresh token 발급 로직 추가
+        response.addCookie(CookieUtils.createCookie("Authorization", null, 0));
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new SignupResponse(userId, newRole,  new JwtToken(bearerToken, null)));
     }
