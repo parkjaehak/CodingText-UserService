@@ -39,10 +39,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtProvider.createToken(providerName, role);
         response.addCookie(CookieUtils.createCookie("Authorization", token, 60*60*60));
         if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-            response.sendRedirect("http://localhost:3000/auth/signup");
+            response.sendRedirect("http://172.16.211.57:19091/user-service/auth/signup");
         } else {
             //TODO: refresh token 추가
-            response.sendRedirect("http://localhost:3000/social-callback");
+            response.sendRedirect("http://172.16.211.57:19091/user-service/auth/cookie-to-header");
         }
     }
 }
