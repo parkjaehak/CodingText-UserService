@@ -54,7 +54,7 @@ public class UserService {
                     .nickName(signupRequest.getNickName())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
-                    .profileUrl(null)      //TODO: default 프로필 사진은 어떻게 가져올 것인지 확인
+                    .profileUrl(signupRequest.getBasicProfileUrl())
                     .build();
         }
         userRepository.save(updateUser);
