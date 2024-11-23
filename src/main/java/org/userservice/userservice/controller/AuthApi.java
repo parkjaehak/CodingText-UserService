@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.auth.SignupResponse;
+import org.userservice.userservice.dto.user.UserDeletionResponse;
 import org.userservice.userservice.error.ErrorResponse;
 import org.userservice.userservice.jwt.JwtToken;
 
@@ -103,9 +104,23 @@ public interface AuthApi {
                     ))
     })
     ResponseEntity<?> signup(SignupRequest signupRequest,
-                             @Parameter(description = "Authorization token from cookie", required = false)String token,
+                             @Parameter(description = "Authorization token from cookie")String token,
                              HttpServletResponse response);
 
 
+
+    @Operation(summary = "회원가입 (on-prem)",
+            description = "개발환경에서 쿠키를 이용한 토큰 전달불가로 소셜로그인 시 query parameter 로 토큰 전달 후 최초로그인 유저가 접근하는 엔드포인트.<br>" +
+                    "Bearer prefix 와 함께 header 로 전달받은 후 새로운 ROLE 을 적용하여 JWT 를 발급한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원가입 성공",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignupResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            })
     ResponseEntity<?> signupTest(SignupRequest signupRequest, String token, HttpServletResponse response);
 }

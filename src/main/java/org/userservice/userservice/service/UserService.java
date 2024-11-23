@@ -3,7 +3,6 @@ package org.userservice.userservice.service;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,10 +13,7 @@ import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.auth.SignupRequest;
-import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
-import org.userservice.userservice.dto.user.UserInfoRequest;
-import org.userservice.userservice.dto.user.UserInfoResponse;
-import org.userservice.userservice.dto.user.UserStatisticResponse;
+import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
@@ -39,7 +35,7 @@ public class UserService {
     @Transactional
     public AuthRole signup(SignupRequest signupRequest, String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with provider: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         User updateUser = null;
         if (signupRequest.getUseSocialProfile()) {
@@ -63,7 +59,7 @@ public class UserService {
 
     public UserStatisticResponse findUserStatisticsByUserId(String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         return UserStatisticResponse.builder()
                 .userId(user.getUserId())
@@ -77,7 +73,7 @@ public class UserService {
 
     public UserInfoResponse findUserInfoByUserId(String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         return UserInfoResponse.builder()
                 .userId(user.getUserId())
@@ -91,7 +87,7 @@ public class UserService {
     @Transactional
     public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, MultipartFile file, String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         String profileUrl = null;
         if (file != null) {
@@ -120,7 +116,7 @@ public class UserService {
     public UserInfoForBlogResponse findUserInfoForBlogService(String userId) {
         UserInfoForBlogResponse userInfo = userRepository.findUserInfoForBlogByUserId(userId);
         if (userInfo == null) {
-            throw new UserNotFoundException("User with userId " + userId + " not found");
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
         return userInfo;
     }
@@ -144,5 +140,13 @@ public class UserService {
         } else {
             throw new BusinessException("공지사항을 조회하지 못했습니다.", ErrorCode.ANNOUNCEMENT_NOT_FOUNT);
         }
+    }
+
+    @Transactional
+    public UserDeletionResponse deleteUser(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        userRepository.delete(user);
+        return new UserDeletionResponse(user.getUserId(), user.getUserName());
     }
 }

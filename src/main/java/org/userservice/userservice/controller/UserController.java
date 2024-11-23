@@ -48,20 +48,28 @@ public class UserController implements UserApi {
     }
 
     //blog-service -> user-service
+    @Override
     @GetMapping("/info")
     public ResponseEntity<?> findUserInfoForBlogService(@RequestHeader("UserId") String userId) {
         return ResponseEntity.ok(userService.findUserInfoForBlogService(userId));
     }
 
     //user-service -> admin-service
+    @Override
     @GetMapping("/announce")
     public ResponseEntity<Page<AnnounceResponse>> getAnnouncementsFromAdminService(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getAnnouncementsFromAdminService(page,size));
     }
+    @Override
     @GetMapping("/announce/{announceId}")
     public ResponseEntity<?> getAnnouncementDetailsFromAdminService(@PathVariable long announceId){
         return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
+    }
+    @Override
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(@RequestHeader("UserId") String userId) {
+        return ResponseEntity.ok(userService.deleteUser(userId));
     }
 }
