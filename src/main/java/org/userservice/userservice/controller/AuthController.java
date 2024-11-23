@@ -33,7 +33,7 @@ public class AuthController implements AuthApi {
         String bearerToken = authService.createBearerToken(claims.getSubject(), AuthRole.ROLE_USER_B);
 
         // 클라이언트의 access 토큰 쿠키를 만료
-        response.addCookie(CookieUtils.createCookie("Authorization", null, 0));
+        //response.addCookie(CookieUtils.createCookie("Authorization", null, 0));
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
