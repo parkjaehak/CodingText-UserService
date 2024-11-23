@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.userservice.userservice.domain.Tier;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
 import org.userservice.userservice.domain.AuthRole;
@@ -13,6 +14,11 @@ import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.auth.SignupRequest;
+import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
+import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
+import org.userservice.userservice.dto.user.UserInfoRequest;
+import org.userservice.userservice.dto.user.UserInfoResponse;
+import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.BusinessException;
@@ -140,6 +146,20 @@ public class UserService {
         } else {
             throw new BusinessException("공지사항을 조회하지 못했습니다.", ErrorCode.ANNOUNCEMENT_NOT_FOUNT);
         }
+    }
+
+    @Transactional
+    public void calculateUserTier(UserScoreRequest userScoreRequest) {
+        User user = userRepository.findById(userScoreRequest.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        int updatedScore = user.getTotalScore() + userScoreRequest.getScore();
+        Tier newTier = Tier.fromScore(updatedScore);
+
+        userRepository.save(user.toBuilder()
+                .totalScore(updatedScore)
+                .tier(newTier)
+                .build());
     }
 
     @Transactional

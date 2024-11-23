@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
+import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
@@ -67,6 +68,13 @@ public class UserController implements UserApi {
     public ResponseEntity<?> getAnnouncementDetailsFromAdminService(@PathVariable long announceId){
         return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
     }
+
+    @PutMapping("/score")
+    public ResponseEntity<?> updateScore(@RequestBody UserScoreRequest userScoreRequest) {
+        userService.calculateUserTier(userScoreRequest);
+        return ResponseEntity.ok("점수 및 티어 업데이트 완료");
+    }
+
     @Override
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@RequestHeader("UserId") String userId) {

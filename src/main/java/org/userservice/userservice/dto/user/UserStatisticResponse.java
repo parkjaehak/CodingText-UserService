@@ -2,6 +2,7 @@ package org.userservice.userservice.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.userservice.userservice.domain.Tier;
 
 @Schema(description = "사용자 문제풀이 통계정보와 관련된 데이터를 전달한다.")
 @Getter
@@ -27,4 +28,7 @@ public class UserStatisticResponse {
 
     @Schema(description = "등수", example = "5")
     private int rank;
+
+    @Schema(description = "티어", example = "BRONZE")
+    private Tier tier;
 }
