@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
@@ -23,6 +24,7 @@ import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
@@ -34,6 +36,7 @@ public class UserService {
         this.adminServiceClient = adminServiceClient;
     }
 
+    @Transactional
     public AuthRole signup(SignupRequest signupRequest, String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with provider: " + userId));
@@ -85,6 +88,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, MultipartFile file, String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with userId: " + userId));
