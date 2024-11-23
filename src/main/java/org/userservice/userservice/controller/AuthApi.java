@@ -105,4 +105,7 @@ public interface AuthApi {
     ResponseEntity<?> signup(SignupRequest signupRequest,
                              @Parameter(description = "Authorization token from cookie", required = false)String token,
                              HttpServletResponse response);
+
+
+    ResponseEntity<?> signupTest(SignupRequest signupRequest, String token, HttpServletResponse response);
 }
