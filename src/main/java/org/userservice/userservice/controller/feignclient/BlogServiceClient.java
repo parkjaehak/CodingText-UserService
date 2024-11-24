@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "blog-service")
 public interface BlogServiceClient {
-    @PostMapping("/blogs")
+    @PostMapping("/blog")
     ResponseEntity<?> createBlog(@RequestParam("userId") String userId);
 }
