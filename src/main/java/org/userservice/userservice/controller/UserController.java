@@ -69,6 +69,7 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
     }
 
+    @Override
     @PutMapping("/score")
     public ResponseEntity<?> updateScore(@RequestBody UserScoreRequest userScoreRequest) {
         userService.calculateUserTier(userScoreRequest);

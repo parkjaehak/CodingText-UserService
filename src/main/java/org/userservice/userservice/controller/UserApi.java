@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
+import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorResponse;
 
@@ -184,6 +186,9 @@ public interface UserApi {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
             })
     ResponseEntity<?> getAnnouncementDetailsFromAdminService(@Parameter(description = "공지사항 ID") long announceId);
+
+
+    ResponseEntity<?> updateScore(UserScoreRequest userScoreRequest);
 
 
     @Operation(summary = "회원 탈퇴", description = "header로 전달된 UserId에 해당하는 User를 삭제한다.",

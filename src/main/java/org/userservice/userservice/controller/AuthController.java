@@ -85,7 +85,6 @@ public class AuthController implements AuthApi {
         AuthRole newRole = userService.signup(signupRequest, userId);
         String bearerToken = authService.createBearerToken(userId, newRole);
 
-        //response.addCookie(CookieUtils.createCookie("Authorization", null, 0));
         response.addHeader("Authorization", bearerToken);
         return ResponseEntity.ok(new SignupResponse(userId, newRole,  new JwtToken(bearerToken, null)));
     }

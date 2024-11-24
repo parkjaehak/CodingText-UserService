@@ -166,6 +166,7 @@ public class UserService {
     public UserDeletionResponse deleteUser(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        //TODO: userId와 연관된 blog, coding 정보 삭제 요청
         userRepository.delete(user);
         return new UserDeletionResponse(user.getUserId(), user.getUserName());
     }
