@@ -58,8 +58,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//Flyway
-	implementation("org.flywaydb:flyway-core:10.7.1")
-	implementation("org.flywaydb:flyway-mysql:10.7.1")
+	implementation 'org.flywaydb:flyway-mysql'
+	implementation 'org.flywaydb:flyway-core'
 
 	//QueryDsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
