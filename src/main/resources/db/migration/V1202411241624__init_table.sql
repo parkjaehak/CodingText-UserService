@@ -1,0 +1,21 @@
+create table users (
+                       user_id varchar(255) not null,
+                       created_at datetime(6),
+                       updated_at datetime(6),
+                       code_language enum ('C','C_PLUS_PLUS','GO','JAVA','JAVASCRIPT','KOTLIN','PHP','PYTHON','R','RUBY','SWIFT','TYPESCRIPT'),
+                       day_of_birth date,
+                       email varchar(255),
+                       gender enum ('FEMALE','MALE','NONE'),
+                       nick_name varchar(255),
+                       phone_number varchar(255),
+                       profile_message varchar(255),
+                       profile_url varchar(255),
+                       register_count integer,
+                       role enum ('ROLE_ADMIN','ROLE_USER_A','ROLE_USER_B'),
+                       solved_count integer,
+                       tier enum ('BRONZE','DIAMOND','GOLD','PLATINUM','SILVER'),
+                       total_score integer,
+                       user_name varchar(255),
+                       user_rank integer,
+                       primary key (user_id)
+) engine=InnoDB
