@@ -188,6 +188,16 @@ public interface UserApi {
     ResponseEntity<?> getAnnouncementDetailsFromAdminService(@Parameter(description = "공지사항 ID") long announceId);
 
 
+    @Operation(summary = "사용자의 점수를 바탕으로 티어와 전체 순위 업데이트",
+            description = "코드 서비스에서 주어진 사용자 ID와 점수를 바탕으로 사용자의 티어와 전체 순위를 업데이트한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "점수 및 티어 업데이트 완료",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     ResponseEntity<?> updateScore(UserScoreRequest userScoreRequest);
 
 
