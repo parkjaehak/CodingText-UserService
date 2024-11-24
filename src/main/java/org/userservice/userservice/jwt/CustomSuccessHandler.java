@@ -42,7 +42,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.sendRedirect("http://localhost:3000/auth?token=" + token + "&signedIn=false");
         } else {
             //TODO: refresh token 추가
-            response.sendRedirect("http://localhost:3000/auth?token=" + token + "&signedIn=true");
+            response.sendRedirect("http://localhost:3000/auth?token=Bearer " + token + "&signedIn=true");
         }
     }
 }
