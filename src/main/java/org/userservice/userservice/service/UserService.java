@@ -1,12 +1,11 @@
 package org.userservice.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.domain.Tier;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
@@ -28,6 +27,7 @@ import org.userservice.userservice.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
@@ -90,39 +90,36 @@ public class UserService {
 
     @Transactional
     public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, String userId) {
-        // 사용자 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        String saveUrl;
-
-        // URL이 변경되지 않았을 경우 기존 URL을 그대로 사용
-        String prevUrl = user.getProfileUrl();
+        String dbUrl = user.getProfileUrl();
         String inputUrl = userInfoRequest.getProfileUrl();
+        log.info("기존 이미지 ={}", dbUrl);
+        log.info("새로 들어온 이미지={}", inputUrl);
 
-        if (prevUrl.equals(inputUrl)) {
-            saveUrl = prevUrl; // 기존 데이터베이스 URL 사용
-        } else {
-            // URL이 변경되었을 경우
-            String updatedUrl = minioFileUploadService.updateProfileImageByUrl(inputUrl, prevUrl);
-
-            // 만약 URL이 null이면 기본 URL 사용
-            if (updatedUrl != null) {
-                saveUrl = updatedUrl; // 저장된 영구 스토리지 URL
-            } else {
-                saveUrl = inputUrl; // 기본 URL
-            }
+        // 정규표현식: " /profileImg1.png" ~ " /profileImg6.png"와 일치하는지 확인
+        String defaultProfileRegex = " /profileImg[1-6]\\.png";
+        String saveUrl;
+        if (dbUrl.matches(defaultProfileRegex) && inputUrl.matches(defaultProfileRegex)) {
+            log.info("기본 -> 기본");
+            saveUrl = minioFileUploadService.handleDefaultToDefault(dbUrl, inputUrl);
+        } else if (dbUrl.matches(defaultProfileRegex)) {
+            log.info("기본 -> 임시");
+            saveUrl = minioFileUploadService.handleDefaultToTemp(inputUrl);
+        } else if (inputUrl.matches(defaultProfileRegex)) {
+            log.info("영구 -> 기본");
+            saveUrl = minioFileUploadService.handlePermanentToDefault(inputUrl, dbUrl);
+        }else{
+            log.info("영구 -> 임시");
+            saveUrl = minioFileUploadService.handlePermanentToTemp(inputUrl, dbUrl);
         }
-
-        // 사용자 정보 업데이트
         User updateUser = userRepository.save(user.toBuilder()
                 .nickName(userInfoRequest.getNickName())
                 .profileUrl(saveUrl)
                 .profileMessage(userInfoRequest.getProfileMessage())
                 .codeLanguage(userInfoRequest.getCodeLanguage())
                 .build());
-
-        // 응답 반환
         return UserInfoResponse.builder()
                 .userId(updateUser.getUserId())
                 .nickName(updateUser.getNickName())
@@ -131,7 +128,6 @@ public class UserService {
                 .codeLanguage(updateUser.getCodeLanguage())
                 .build();
     }
-
 
     public UserInfoForBlogResponse findUserInfoForBlogService(String userId) {
         UserInfoForBlogResponse userInfo = userRepository.findUserInfoForBlogByUserId(userId);

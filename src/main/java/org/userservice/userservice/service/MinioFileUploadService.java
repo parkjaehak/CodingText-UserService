@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.config.MinioConfig;
 import org.userservice.userservice.error.exception.FileUploadException;
@@ -23,35 +24,59 @@ import static org.userservice.userservice.error.ErrorCode.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class MinioFileUploadService {
 
     private final MinioConfig minioConfig;
     private final MinioClient minioClient;
 
-    public String updateProfileImageByUrl(String inputUrl, String prevUrl) {
-        //"http://172.16.211.113:9000/uploadimage/example.png" -> "http://172.16.211.113:9000"
-        String baseUrl = inputUrl.substring(0, inputUrl.indexOf("/", inputUrl.indexOf("://") + 3));
-        //"http://172.16.211.113:9000/uploadimage/example.png" -> "example.png"
-        String objectName = inputUrl.substring(inputUrl.lastIndexOf("/") + 1);
-        log.info("baseUrl={}", baseUrl);
-
-        // Temp bucket 에서 이미지가 있는 경우
-        if (checkTempBucket(objectName)) {
-            String newUrl = copyTempImageToPermanentBucket(objectName, baseUrl);
-            deleteImage(minioConfig.getTempBucketName(), objectName);
-
-            //TODO: prevUrl을 통해서 영구 스토리지에 있는지 확인 후 삭제, 없으면 그냥 패스
-            deleteImage(minioConfig.getBucketName(), objectName); //TODO: 이미지가 없는 경우 삭제 안해도됨
-            return newUrl;
+    //1. 기본이미지를 기본이미지로 변환
+    public String handleDefaultToDefault(String dbUrl, String inputUrl) {
+        if (dbUrl.equals(inputUrl)) {
+            log.info("기존 db url 유지");
+            return dbUrl;
         } else {
-            // Temp bucket 에 이미지가 없는 경우
-            deleteImage(minioConfig.getBucketName(), objectName); //TODO: 이미지가 없는 경우 삭제 안해도됨
-            return null;
+            return inputUrl;
+        }
+    }
+
+    //2. 기본이미지를 임시스토리지의 이미지로 변환
+    public String handleDefaultToTemp(String inputUrl) {
+        String baseUrl = inputUrl.substring(0, inputUrl.indexOf("/", inputUrl.indexOf("://") + 3));
+        String inputObjectName = inputUrl.substring(inputUrl.lastIndexOf("/") + 1);
+
+        String newUrl = copyTempImageToPermanentBucket(inputObjectName, baseUrl);
+        deleteImage(minioConfig.getTempBucketName(), inputObjectName);
+        return newUrl;
+    }
+
+    //3. 영구스토리지의 이미지를 기본이미지로 변환
+    public String handlePermanentToDefault(String inputUrl, String dbUrl) {
+        String dbObjectName = dbUrl.substring(dbUrl.lastIndexOf("/") + 1);
+        deleteImage(minioConfig.getBucketName(), dbObjectName);
+        return inputUrl;
+    }
+
+    //4. 영구스토리지의 이미지를 임시스토리지의 이미지로 변환
+    public String handlePermanentToTemp(String inputUrl, String dbUrl) {
+        if (inputUrl.equals(dbUrl)) {
+            log.info("기존 db url 유지");
+            return dbUrl;
+        } else {
+            String baseUrl = inputUrl.substring(0, inputUrl.indexOf("/", inputUrl.indexOf("://") + 3));   //"http://172.16.211.113:9000/uploadimage/example.png" -> "http://172.16.211.113:9000"
+            String inputObjectName = inputUrl.substring(inputUrl.lastIndexOf("/") + 1);     //"http://172.16.211.113:9000/uploadimage/example.png" -> "example.png"
+            String dbObjectName = dbUrl.substring(dbUrl.lastIndexOf("/") + 1);
+
+            String newUrl = copyTempImageToPermanentBucket(inputObjectName, baseUrl);
+            deleteImage(minioConfig.getTempBucketName(), inputObjectName);
+            deleteImage(minioConfig.getBucketName(), dbObjectName);
+            return newUrl;
         }
     }
 
 
-    private boolean checkTempBucket(String objectName) {
+    //TODO: 필요성 확인
+    private boolean isImageInTempBucket(String objectName) {
         try {
             minioClient.getObject(
                     GetObjectArgs.builder()
@@ -104,9 +129,9 @@ public class MinioFileUploadService {
                             .object(ObjectName)
                             .build());
         } catch (MinioException e) {
-            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "I/O 관련 에러로 인해 이미지 복사 불가능");
+            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "I/O 관련 에러로 인해 이미지 삭제 불가능");
         } catch (Exception e) {
-            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "기타 에러로 인해 이미지 복사 불가능");
+            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "기타 에러로 인해 이미지 삭제 불가능");
         }
     }
 }

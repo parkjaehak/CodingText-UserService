@@ -26,16 +26,13 @@ public class UserController implements UserApi {
     @Override
     @GetMapping("/statistics")
     public ResponseEntity<?> findUserStatistics(@RequestHeader("UserId") String userId) {
-        log.info("userId ={} ", userId);
-        UserStatisticResponse response = userService.findUserStatisticsByUserId(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.findUserStatisticsByUserId(userId));
     }
 
     @Override
     @GetMapping("/userInfo")
-    public ResponseEntity<?> findUserInfos(@RequestHeader("UserId") String userId) {
-        UserInfoResponse response = userService.findUserInfoByUserId(userId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> findUserInfos(@RequestHeader("UserId") String userId) {;
+        return ResponseEntity.ok(userService.findUserInfoByUserId(userId));
     }
 
     @Override
@@ -43,8 +40,7 @@ public class UserController implements UserApi {
     public ResponseEntity<?> updateUserInfos(
             @Validated @RequestBody UserInfoRequest userInfoRequest,
             @RequestHeader("UserId") String userId) {
-        UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.updateUserInfoByUserId(userInfoRequest, userId));
     }
 
     //blog-service -> user-service
