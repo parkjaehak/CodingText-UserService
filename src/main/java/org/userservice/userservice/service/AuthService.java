@@ -3,15 +3,20 @@ package org.userservice.userservice.service;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.domain.User;
+import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.error.exception.UnauthenticatedException;
 import org.userservice.userservice.error.exception.UnauthorizedException;
+import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.jwt.JwtProvider;
+import org.userservice.userservice.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
+    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
     public Claims validateAndExtractClaims(String token, AuthRole requiredRole) {
@@ -31,5 +36,30 @@ public class AuthService {
 
     public String createBearerToken(String userId, AuthRole role) {
         return "Bearer " + jwtProvider.createToken(userId, String.valueOf(role));
+    }
+
+    @Transactional
+    public AuthRole signup(SignupRequest signupRequest, String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        User updateUser = null;
+        if (signupRequest.getUseSocialProfile()) {
+            //소셜계정의 프로필을 사용
+            updateUser = user.toBuilder()
+                    .nickName(signupRequest.getNickName())
+                    .codeLanguage(signupRequest.getCodeLanguage())
+                    .role(AuthRole.ROLE_USER_B)
+                    .build();
+        } else {
+            updateUser = user.toBuilder()
+                    .nickName(signupRequest.getNickName())
+                    .codeLanguage(signupRequest.getCodeLanguage())
+                    .role(AuthRole.ROLE_USER_B)
+                    .profileUrl(signupRequest.getBasicProfileUrl())
+                    .build();
+        }
+        userRepository.save(updateUser);
+        return updateUser.getRole();
     }
 }

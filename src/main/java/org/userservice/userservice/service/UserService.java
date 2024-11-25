@@ -34,32 +34,6 @@ public class UserService {
     private final MinioFileUploadService minioFileUploadService;
     private final AdminServiceClient adminServiceClient;
 
-
-    @Transactional
-    public AuthRole signup(SignupRequest signupRequest, String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
-        User updateUser = null;
-        if (signupRequest.getUseSocialProfile()) {
-            //소셜계정의 프로필을 사용
-            updateUser = user.toBuilder()
-                    .nickName(signupRequest.getNickName())
-                    .codeLanguage(signupRequest.getCodeLanguage())
-                    .role(AuthRole.ROLE_USER_B)
-                    .build();
-        } else {
-            updateUser = user.toBuilder()
-                    .nickName(signupRequest.getNickName())
-                    .codeLanguage(signupRequest.getCodeLanguage())
-                    .role(AuthRole.ROLE_USER_B)
-                    .profileUrl(signupRequest.getBasicProfileUrl())
-                    .build();
-        }
-        userRepository.save(updateUser);
-        return updateUser.getRole();
-    }
-
     public UserStatisticResponse findUserStatisticsByUserId(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));

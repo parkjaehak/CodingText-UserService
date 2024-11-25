@@ -1,6 +1,7 @@
 package org.userservice.userservice.service;
 
 import io.minio.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,6 @@ import static org.userservice.userservice.error.ErrorCode.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
 public class MinioFileUploadService {
 
     private final MinioConfig minioConfig;
@@ -128,6 +128,12 @@ public class MinioFileUploadService {
                             .bucket(BucketName)
                             .object(ObjectName)
                             .build());
+        } catch (ErrorResponseException e) {
+            if ("NoSuchKey".equals(e.errorResponse().code())) {
+                log.warn("이미 삭제된 객체 또는 존재하지 않는 객체: {}", ObjectName);
+            } else {
+                throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "MinIO 오류: " + e.getMessage());
+            }
         } catch (MinioException e) {
             throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "I/O 관련 에러로 인해 이미지 삭제 불가능");
         } catch (Exception e) {

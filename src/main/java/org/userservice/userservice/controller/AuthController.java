@@ -22,7 +22,6 @@ import org.userservice.userservice.utils.CookieUtils;
 @RequestMapping("/auth")
 public class AuthController implements AuthApi {
 
-    private final UserService userService;
     private final AuthService authService;
     private final BlogServiceClient blogServiceClient;
 
@@ -38,7 +37,6 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
 
-    //TODO: 실제 프로덕션에서는 해당 api 사용
     @Override
     @PostMapping("/signup/test")
     public ResponseEntity<?> signupTest(
@@ -48,13 +46,13 @@ public class AuthController implements AuthApi {
 
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_A);
         String userId = claims.getSubject();
-
+        //TODO: prod provisioning 시에는 주석 제거
 //        // 블로그 생성 요청 및 응답 확인
 //        if (!blogServiceClient.createBlog(userId).getStatusCode().is2xxSuccessful()) {
 //            throw new CreationException("블로그 생성에 실패했습니다.");
 //        }
 
-        AuthRole newRole = userService.signup(signupRequest, userId);
+        AuthRole newRole = authService.signup(signupRequest, userId);
         String bearerToken = authService.createBearerToken(userId, newRole);
 
         //TODO: refresh token 발급 로직 추가
@@ -83,7 +81,7 @@ public class AuthController implements AuthApi {
             throw new CreationException("블로그 생성에 실패했습니다.");
         }
 
-        AuthRole newRole = userService.signup(signupRequest, userId);
+        AuthRole newRole = authService.signup(signupRequest, userId);
         String bearerToken = authService.createBearerToken(userId, newRole);
 
         response.addHeader("Authorization", bearerToken);
