@@ -22,8 +22,14 @@ public enum ErrorCode {
     //user
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
 
-    //feignclient
-    ANNOUNCEMENT_NOT_FOUNT(404, "F001", "공지사항 정보 찾을 수 없습니다.");
+    //feign client
+    ANNOUNCEMENT_NOT_FOUNT(404, "F001", "공지사항 정보 찾을 수 없습니다."),
+
+    //object storage
+    IMAGE_NOT_FOUND(404, "I001", "I/O 관련 에러"),
+    IMAGE_COPY_FAILED(500, "I002", "이미지 복사 실패"),
+    IMAGE_DELETION_FAILED(500,"I003","이미지 삭제 실패");
+
 
     private final int status;
     private final String code;

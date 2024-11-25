@@ -134,13 +134,7 @@ public interface UserApi {
                     }
                     ))
     })
-    ResponseEntity<?> updateUserInfos(
-            @Parameter(description =
-                    "1. 닉네임 \n" +
-                            "2. 상태 메세지 \n" +
-                            "3. 기본 프로그래밍 언어", required = true) UserInfoRequest userInfoRequest,
-            @Parameter(description = "4. 프로필 사진")
-            MultipartFile file, String userId);
+    ResponseEntity<?> updateUserInfos(UserInfoRequest userInfoRequest, String userId);
 
 
 

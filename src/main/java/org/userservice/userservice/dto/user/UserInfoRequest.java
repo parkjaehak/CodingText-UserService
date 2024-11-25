@@ -17,6 +17,9 @@ public class UserInfoRequest {
     @Pattern(regexp = "^[^\\s]+$", message = "닉네임에는 공백이 포함될 수 없습니다.")
     private String nickName;
 
+    @Schema(description = "사용자 프로필 이미지 url", example = "http://{storage-hostname}/uploadimage/temp.png")
+    private String profileUrl;
+
     @Schema(description = "상태 메세지", example = "hello!")
     @Size(max = 30, message = "상태 메세지는 최대 30자여야 합니다.")
     private String profileMessage;

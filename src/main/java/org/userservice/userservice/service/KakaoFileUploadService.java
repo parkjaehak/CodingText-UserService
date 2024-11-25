@@ -15,18 +15,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
-/**
- * @삭제예정: 요구사항 수정으로 불필요한 코드
- */
 @Slf4j
 @RequiredArgsConstructor
-@Service("kakao")
-public class KakaoFileUploadService implements FileUploadService{
+@Service
+public class KakaoFileUploadService{
 
     private final KakaoCloudStorageConfig kakaoCloudStorageConfig;
     private final S3Client s3Client;
 
-    @Override
     public String saveImageFile(MultipartFile file) {
         String uploadedFileUrl;
         try {

@@ -1,5 +1,6 @@
 package org.userservice.userservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +27,13 @@ import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
-    private final FileUploadService fileUploadService;
+    private final MinioFileUploadService minioFileUploadService;
     private final AdminServiceClient adminServiceClient;
 
-    public UserService(UserRepository userRepository, @Qualifier("minio") FileUploadService fileUploadService, AdminServiceClient adminServiceClient) {
-        this.userRepository = userRepository;
-        this.fileUploadService = fileUploadService;
-        this.adminServiceClient = adminServiceClient;
-    }
 
     @Transactional
     public AuthRole signup(SignupRequest signupRequest, String userId) {
@@ -74,6 +71,7 @@ public class UserService {
                 .registerCount(user.getRegisterCount())
                 .solvedCount(user.getSolvedCount())
                 .rank(user.getUserRank())
+                .profileUrl(user.getProfileUrl())
                 .build();
     }
 
@@ -91,33 +89,46 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, MultipartFile file, String userId) {
+    public UserInfoResponse updateUserInfoByUserId(UserInfoRequest userInfoRequest, String userId) {
+        // 사용자 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        String profileUrl = null;
-        if (file != null) {
-            //TODO: default 사진일 경우 null
-            //이미지 url을 입력 받아 minio에 있으면 중복저장하지 않음
-            // 기존 이미지가 그대로라면 중복저장을 방지하기 위해 변경여부를 받아야 할 것
-            profileUrl = fileUploadService.saveImageFile(file);
+        String saveUrl;
+
+        // URL이 변경되지 않았을 경우 기존 URL을 그대로 사용
+        if (user.getProfileUrl().equals(userInfoRequest.getProfileUrl())) {
+            saveUrl = user.getProfileUrl(); // 기존 데이터베이스 URL 사용
+        } else {
+            // URL이 변경되었을 경우
+            String updatedUrl = minioFileUploadService.updateProfileImageByUrl(userInfoRequest.getProfileUrl());
+
+            // 만약 URL이 null이면 기본 URL 사용
+            if (updatedUrl != null) {
+                saveUrl = updatedUrl; // 저장된 영구 스토리지 URL
+            } else {
+                saveUrl = userInfoRequest.getProfileUrl(); // 기본 URL
+            }
         }
 
+        // 사용자 정보 업데이트
         User updateUser = userRepository.save(user.toBuilder()
                 .nickName(userInfoRequest.getNickName())
-                .profileUrl(profileUrl)
+                .profileUrl(saveUrl)
                 .profileMessage(userInfoRequest.getProfileMessage())
                 .codeLanguage(userInfoRequest.getCodeLanguage())
                 .build());
 
+        // 응답 반환
         return UserInfoResponse.builder()
                 .userId(updateUser.getUserId())
                 .nickName(updateUser.getNickName())
-                .profileUrl(updateUser.getProfileUrl())
+                .profileUrl(saveUrl)
                 .profileMessage(updateUser.getProfileMessage())
                 .codeLanguage(updateUser.getCodeLanguage())
                 .build();
     }
+
 
     public UserInfoForBlogResponse findUserInfoForBlogService(String userId) {
         UserInfoForBlogResponse userInfo = userRepository.findUserInfoForBlogByUserId(userId);

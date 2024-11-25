@@ -19,6 +19,8 @@ public class MinioConfig {
     private String secretKey;
     @Value("${minio.bucketName}")
     private String bucketName;
+    @Value("${minio.temp.bucketName}")
+    private String tempBucketName;
 
     @Bean
     public MinioClient minioClient() {

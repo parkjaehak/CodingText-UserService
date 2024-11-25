@@ -31,4 +31,7 @@ public class UserStatisticResponse {
 
     @Schema(description = "티어", example = "BRONZE")
     private Tier tier;
+
+    @Schema(description = "사용자 프로필 이미지 url", example = "https://objectstorage.kr-central-2.kakaocloud.com/.../example.png")
+    private String profileUrl;
 }

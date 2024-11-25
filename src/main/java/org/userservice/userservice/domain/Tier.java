@@ -8,11 +8,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Tier {
-    DIAMOND(1000, "다이아 등급"),
-    PLATINUM(700, "플래티넘 등급"),
-    GOLD(500, "골드 등급"),
-    SILVER(300, "실버 등급"),
-    BRONZE(0, "브론즈 등급");
+    KING(1000, "킹 등급"),
+    SENIOR(700, "시니어 등급"),
+    JUNIOR(500, "주니어 등급"),
+    SOPHOMORE(300, "소포모어 등급"),
+    FRESHMAN(0, "프레시맨 등급");
 
     private final int minScore;
     private final String description;
@@ -23,6 +23,6 @@ public enum Tier {
                 return tier;
             }
         }
-        return BRONZE;
+        return FRESHMAN;
     }
 }

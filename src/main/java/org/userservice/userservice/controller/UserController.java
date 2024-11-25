@@ -39,12 +39,11 @@ public class UserController implements UserApi {
     }
 
     @Override
-    @PutMapping(value = "/userInfo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/userInfo")
     public ResponseEntity<?> updateUserInfos(
-            @Validated @RequestPart UserInfoRequest userInfoRequest,
-            @RequestPart(required = false) MultipartFile file,
+            @Validated @RequestBody UserInfoRequest userInfoRequest,
             @RequestHeader("UserId") String userId) {
-        UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, file, userId);
+        UserInfoResponse response = userService.updateUserInfoByUserId(userInfoRequest, userId);
         return ResponseEntity.ok(response);
     }
 
