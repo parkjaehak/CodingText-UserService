@@ -9,8 +9,8 @@ pipeline {
         APP_NAME = "ct-userservice-app"
         TARGET_HOST = "config@172.16.211.116"
         SSH_CREDENTIALS = "jenkins-ssh"
-        ACTIVE_PROFILE = 'dev'
-        CONFIG_SERVER_URL = 'http://172.16.211.116:9000'
+        ACTIVE_PROFILE = "dev"
+        CONFIG_SERVER_URL = "172.16.211.116:9000"
     }
 
     stages {
