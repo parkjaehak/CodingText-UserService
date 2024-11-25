@@ -3,6 +3,7 @@ package org.userservice.userservice.dto.user;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.userservice.userservice.domain.CodeLanguage;
+import org.userservice.userservice.domain.Tier;
 
 @Getter
 @Builder
@@ -24,4 +25,7 @@ public class UserInfoResponse {
 
     @Schema(description = "기본 프로그래밍 언어", example = "java")
     private CodeLanguage codeLanguage;
+
+    @Schema(description = "티어", example = "KING")
+    private Tier tier;
 }

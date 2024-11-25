@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtProvider jwtProvider;
 
+    @Value("${social.login.profile}")
+    private  String socialLoginProfile;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         //OAuth2User (인증정보)
@@ -38,11 +42,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //JWT 생성
         String token = jwtProvider.createToken(providerName, role);
         response.addCookie(CookieUtils.createCookie("Authorization", token, 60*60*60));
-        if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-            response.sendRedirect("http://localhost:3000/auth?token=" + token + "&signedIn=false");
-        } else {
-            //TODO: refresh token 추가
-            response.sendRedirect("http://localhost:3000/auth?token=Bearer " + token + "&signedIn=true");
+
+        if (socialLoginProfile.equals("dev")) {
+            if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
+                response.sendRedirect("http://localhost:3000/auth?token=" + token + "&signedIn=false");
+            } else {
+                response.sendRedirect("http://localhost:3000/auth?token=Bearer " + token + "&signedIn=true");
+            }
+        } else if (socialLoginProfile.equals("local")) {
+            if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
+                response.sendRedirect("http://localhost:8080/auth/signup/test");
+            } else {
+                response.sendRedirect("http://localhost:8080/auth/cookie-to-header");
+            }
         }
     }
 }

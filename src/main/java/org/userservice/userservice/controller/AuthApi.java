@@ -103,7 +103,7 @@ public interface AuthApi {
                     }
                     ))
     })
-    ResponseEntity<?> signup(SignupRequest signupRequest,
+    ResponseEntity<?> signupTest(SignupRequest signupRequest,
                              @Parameter(description = "Authorization token from cookie")String token,
                              HttpServletResponse response);
 
@@ -122,5 +122,5 @@ public interface AuthApi {
                     @ApiResponse(responseCode = "500", description = "서버 오류",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
             })
-    ResponseEntity<?> signupTest(SignupRequest signupRequest, String token, HttpServletResponse response);
+    ResponseEntity<?> signup(SignupRequest signupRequest, String token, HttpServletResponse response);
 }

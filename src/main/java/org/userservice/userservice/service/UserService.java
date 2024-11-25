@@ -97,17 +97,20 @@ public class UserService {
         String saveUrl;
 
         // URL이 변경되지 않았을 경우 기존 URL을 그대로 사용
-        if (user.getProfileUrl().equals(userInfoRequest.getProfileUrl())) {
-            saveUrl = user.getProfileUrl(); // 기존 데이터베이스 URL 사용
+        String prevUrl = user.getProfileUrl();
+        String inputUrl = userInfoRequest.getProfileUrl();
+
+        if (prevUrl.equals(inputUrl)) {
+            saveUrl = prevUrl; // 기존 데이터베이스 URL 사용
         } else {
             // URL이 변경되었을 경우
-            String updatedUrl = minioFileUploadService.updateProfileImageByUrl(userInfoRequest.getProfileUrl());
+            String updatedUrl = minioFileUploadService.updateProfileImageByUrl(inputUrl, prevUrl);
 
             // 만약 URL이 null이면 기본 URL 사용
             if (updatedUrl != null) {
                 saveUrl = updatedUrl; // 저장된 영구 스토리지 URL
             } else {
-                saveUrl = userInfoRequest.getProfileUrl(); // 기본 URL
+                saveUrl = inputUrl; // 기본 URL
             }
         }
 

@@ -28,17 +28,19 @@ public class MinioFileUploadService {
     private final MinioConfig minioConfig;
     private final MinioClient minioClient;
 
-    public String updateProfileImageByUrl(String currUrl) {
+    public String updateProfileImageByUrl(String inputUrl, String prevUrl) {
         //"http://172.16.211.113:9000/uploadimage/example.png" -> "http://172.16.211.113:9000"
-        String baseUrl = currUrl.substring(0, currUrl.indexOf("/", currUrl.indexOf("://") + 3));
+        String baseUrl = inputUrl.substring(0, inputUrl.indexOf("/", inputUrl.indexOf("://") + 3));
         //"http://172.16.211.113:9000/uploadimage/example.png" -> "example.png"
-        String objectName = currUrl.substring(currUrl.lastIndexOf("/") + 1);
+        String objectName = inputUrl.substring(inputUrl.lastIndexOf("/") + 1);
         log.info("baseUrl={}", baseUrl);
 
         // Temp bucket 에서 이미지가 있는 경우
         if (checkTempBucket(objectName)) {
             String newUrl = copyTempImageToPermanentBucket(objectName, baseUrl);
             deleteImage(minioConfig.getTempBucketName(), objectName);
+
+            //TODO: prevUrl을 통해서 영구 스토리지에 있는지 확인 후 삭제, 없으면 그냥 패스
             deleteImage(minioConfig.getBucketName(), objectName); //TODO: 이미지가 없는 경우 삭제 안해도됨
             return newUrl;
         } else {

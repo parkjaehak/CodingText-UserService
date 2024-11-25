@@ -38,9 +38,10 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new JwtToken(bearerToken, null));
     }
 
+    //TODO: 실제 프로덕션에서는 해당 api 사용
     @Override
-    @PostMapping("/signup/prod")
-    public ResponseEntity<?> signup(
+    @PostMapping("/signup/test")
+    public ResponseEntity<?> signupTest(
             @Validated @RequestBody SignupRequest signupRequest,
             @CookieValue(name = "Authorization", required = false) String token,
             HttpServletResponse response) {
@@ -48,10 +49,10 @@ public class AuthController implements AuthApi {
         Claims claims = authService.validateAndExtractClaims(token, AuthRole.ROLE_USER_A);
         String userId = claims.getSubject();
 
-        // 블로그 생성 요청 및 응답 확인
-        if (!blogServiceClient.createBlog(userId).getStatusCode().is2xxSuccessful()) {
-            throw new CreationException("블로그 생성에 실패했습니다.");
-        }
+//        // 블로그 생성 요청 및 응답 확인
+//        if (!blogServiceClient.createBlog(userId).getStatusCode().is2xxSuccessful()) {
+//            throw new CreationException("블로그 생성에 실패했습니다.");
+//        }
 
         AuthRole newRole = userService.signup(signupRequest, userId);
         String bearerToken = authService.createBearerToken(userId, newRole);
@@ -65,7 +66,7 @@ public class AuthController implements AuthApi {
 
     @Override
     @PostMapping("/signup")
-    public ResponseEntity<?> signupTest(
+    public ResponseEntity<?> signup(
             @Validated @RequestBody SignupRequest signupRequest,
             @RequestHeader(name = "Authorization", required = false) String token,
             HttpServletResponse response) {

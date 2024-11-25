@@ -29,7 +29,7 @@ public class UserStatisticResponse {
     @Schema(description = "등수", example = "5")
     private int rank;
 
-    @Schema(description = "티어", example = "BRONZE")
+    @Schema(description = "티어", example = "KING")
     private Tier tier;
 
     @Schema(description = "사용자 프로필 이미지 url", example = "https://objectstorage.kr-central-2.kakaocloud.com/.../example.png")
