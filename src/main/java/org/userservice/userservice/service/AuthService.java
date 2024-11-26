@@ -86,4 +86,9 @@ public class AuthService {
         RefreshToken token = refreshTokenRepository.findById(userId).orElse(null);
         return token != null ? token.getRefreshToken() : null;
     }
+    @Transactional
+    // RefreshToken 삭제 (로그아웃)
+    public void deleteRefreshToken(String userId) {
+        refreshTokenRepository.deleteById(userId);
+    }
 }
