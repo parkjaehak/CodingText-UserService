@@ -124,7 +124,7 @@ public interface AuthApi {
             })
     ResponseEntity<?> signup(SignupRequest signupRequest, String token, HttpServletResponse response);
 
-    @Operation(summary = "Access token 재발급",
+    @Operation(summary = "토큰 재발급",
             description = "Access token 이 만료되었을 경우 Refresh token 을 전달받아 인증이 되면 새로운 Access, Refresh token 을 발급한다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "새 토큰 발급 성공",

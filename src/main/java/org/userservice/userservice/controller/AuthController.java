@@ -91,7 +91,7 @@ public class AuthController implements AuthApi {
 
 
     private void addTokensToResponse(HttpServletResponse response, String userId, AuthRole role) {
-        String bearerAccessToken = authService.createBearerToken(userId, "access", role, 1000 * 60 * 10L); // 10분
+        String bearerAccessToken = authService.createBearerToken(userId, "access", role, 1000 * 60 * 30L); // 30분
         String bearerRefreshToken = authService.createBearerToken(userId, "refresh", role, 1000 * 60 * 60 * 24L); // 24시간
 
         authService.saveRefreshToken(userId, bearerRefreshToken);
