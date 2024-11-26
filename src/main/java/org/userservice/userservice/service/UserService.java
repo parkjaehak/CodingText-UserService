@@ -1,11 +1,13 @@
 package org.userservice.userservice.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.userservice.userservice.controller.feignclient.BlogServiceClient;
 import org.userservice.userservice.domain.Tier;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
@@ -22,6 +24,7 @@ import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.BusinessException;
+import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.UserRepository;
 
@@ -33,6 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final MinioFileUploadService minioFileUploadService;
     private final AdminServiceClient adminServiceClient;
+    private final BlogServiceClient blogServiceClient;
 
     public UserStatisticResponse findUserStatisticsByUserId(String userId) {
         User user = userRepository.findById(userId)
@@ -150,7 +154,13 @@ public class UserService {
     public UserDeletionResponse deleteUser(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        //TODO: userId와 연관된 blog, coding 정보 삭제 요청
+
+        try {
+            blogServiceClient.deleteBlog(userId);
+        } catch (FeignException e) {
+            throw new CreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
+        }
+
         userRepository.delete(user);
         return new UserDeletionResponse(user.getUserId(), user.getUserName());
     }
