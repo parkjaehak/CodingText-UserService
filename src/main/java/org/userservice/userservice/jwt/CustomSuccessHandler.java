@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.OAuth2UserDetails;
+import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.utils.CookieUtils;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Value("${social.login.profile}")
     private  String socialLoginProfile;
+    private final AuthService authService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -47,6 +49,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
                 response.sendRedirect("http://localhost:3000/auth?access=" + accessToken + "&signedIn=false");
             } else {
+                authService.saveRefreshToken(providerName, "Bearer " + refreshToken);
                 response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "$refresh=Bearer "+ refreshToken + "&signedIn=true");
             }
 
