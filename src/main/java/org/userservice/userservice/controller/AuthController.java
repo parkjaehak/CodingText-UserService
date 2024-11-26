@@ -4,7 +4,6 @@ import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -82,10 +81,14 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh")));
     }
 
+
+
+
+
+
     private void addTokensToResponse(HttpServletResponse response, String userId, AuthRole role) {
         String bearerAccessToken = authService.createBearerToken(userId, "access", role, 1000 * 60 * 10L); // 10분
         String bearerRefreshToken = authService.createBearerToken(userId, "refresh", role, 1000 * 60 * 60 * 24L); // 24시간
-
         response.addHeader("Authorization", bearerAccessToken);
         response.addHeader("Refresh", bearerRefreshToken);
     }

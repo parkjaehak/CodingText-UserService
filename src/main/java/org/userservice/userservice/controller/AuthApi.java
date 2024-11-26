@@ -123,4 +123,20 @@ public interface AuthApi {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
             })
     ResponseEntity<?> signup(SignupRequest signupRequest, String token, HttpServletResponse response);
+
+    @Operation(summary = "Access token 재발급",
+            description = "Access token 이 만료되었을 경우 Refresh token 을 전달받아 인증이 되면 새로운 Access, Refresh token 을 발급한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "새 토큰 발급 성공",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
+                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "토큰 타입이 맞지 않음(access, refresh)",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    ResponseEntity<?> reissueToken(String refreshToken, HttpServletResponse response);
 }

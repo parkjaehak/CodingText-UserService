@@ -43,19 +43,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ImageNotFoundException.class)
     protected ResponseEntity<ErrorResponse> handleImageNotFoundException(ImageNotFoundException e) {
         final ErrorCode errorCode = e.getErrorCode();
-        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage());
+        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage(), e);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
     @ExceptionHandler(ImageCopyFailedException.class)
     protected ResponseEntity<ErrorResponse> handleImageCopyFailedException(ImageCopyFailedException e) {
         final ErrorCode errorCode = e.getErrorCode();
-        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage());
+        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage(), e);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
     @ExceptionHandler(ImageDeletionFailedException.class)
     protected ResponseEntity<ErrorResponse> handleImageDeletionFailedException(ImageDeletionFailedException e) {
         final ErrorCode errorCode = e.getErrorCode();
-        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage());
+        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage(), e);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 
