@@ -4,6 +4,7 @@ import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.auth.SignupResponse;
 import org.userservice.userservice.error.exception.CreationException;
+import org.userservice.userservice.error.exception.RefreshTokenNotFoundException;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.utils.CookieUtils;
@@ -77,6 +79,10 @@ public class AuthController implements AuthApi {
             HttpServletResponse response) {
 
         Claims claims = extractClaims(refreshToken, AuthRole.ROLE_USER_B, "refresh");
+        String storedRefreshToken = authService.getRefreshToken(claims.getSubject());
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new RefreshTokenNotFoundException(HttpStatus.BAD_REQUEST,"Refresh Token 이 일치하지 않거나 없습니다.");
+        }
         addTokensToResponse(response, claims.getSubject(), AuthRole.ROLE_USER_B);
         return ResponseEntity.ok(new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh")));
     }
@@ -84,11 +90,12 @@ public class AuthController implements AuthApi {
 
 
 
-
-
     private void addTokensToResponse(HttpServletResponse response, String userId, AuthRole role) {
         String bearerAccessToken = authService.createBearerToken(userId, "access", role, 1000 * 60 * 10L); // 10분
         String bearerRefreshToken = authService.createBearerToken(userId, "refresh", role, 1000 * 60 * 60 * 24L); // 24시간
+
+        authService.saveRefreshToken(userId, bearerRefreshToken);
+
         response.addHeader("Authorization", bearerAccessToken);
         response.addHeader("Refresh", bearerRefreshToken);
     }

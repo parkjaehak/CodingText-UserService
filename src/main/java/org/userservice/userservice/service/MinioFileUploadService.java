@@ -120,6 +120,7 @@ public class MinioFileUploadService {
                             .bucket(BucketName)
                             .object(ObjectName)
                             .build());
+            log.info("삭제 요청이 성공적으로 처리되었습니다.");
         } catch (ErrorResponseException e) {
             if ("NoSuchKey".equals(e.errorResponse().code())) {
                 log.warn("이미 삭제된 객체 또는 존재하지 않는 객체: {}", ObjectName);

@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.userservice.userservice.domain.AuthRole;
+import org.userservice.userservice.domain.RefreshToken;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.error.exception.*;
 import org.userservice.userservice.jwt.JwtProvider;
+import org.userservice.userservice.repository.RefreshTokenRepository;
 import org.userservice.userservice.repository.UserRepository;
 
 @Service
@@ -18,6 +20,7 @@ import org.userservice.userservice.repository.UserRepository;
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public Claims validateAndExtractClaims(String token, AuthRole requiredRole, String tokenType) {
         if (token == null) {
@@ -68,5 +71,22 @@ public class AuthService {
         }
         userRepository.save(updateUser);
         return updateUser.getRole();
+    }
+
+    // RefreshToken 저장
+    public void saveRefreshToken(String userId, String refreshToken) {
+        RefreshToken token = new RefreshToken(userId, refreshToken);
+        refreshTokenRepository.save(token);
+    }
+
+    // RefreshToken 조회
+    public String getRefreshToken(String userId) {
+        RefreshToken token = refreshTokenRepository.findById(userId).orElse(null);
+        return token != null ? token.getRefreshToken() : null;
+    }
+
+    // RefreshToken 삭제
+    public void deleteRefreshToken(String userId) {
+        refreshTokenRepository.deleteById(userId);
     }
 }

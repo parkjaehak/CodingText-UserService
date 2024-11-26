@@ -14,14 +14,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableRedisRepositories
 public class RedisConfig {
 
-    // application.yml 파일에서 설정한 값을 각 필드에 주입
     @Value("${spring.data.redis.host}")
     private String redisHost;
-
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    // Redis 서버에 연결하기 위한 설정
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisHost, redisPort);
@@ -30,9 +27,18 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+
+        // 일반적인 key:value의 경우 시리얼라이저
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer()); // key 직렬화 방식 정의
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer()); // 저장되는 데이터값의 JSON 직렬화 방식을 정의
+
+        // Hash를 사용할 경우 시리얼라이저
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+
+        // 모든 경우
+        redisTemplate.setDefaultSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
 }

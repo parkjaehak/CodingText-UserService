@@ -33,7 +33,8 @@ public class User extends BaseEntity {
     private String phoneNumber;
 
     @Column(name = "profile_url")
-    private String profileUrl;
+    @Builder.Default
+    private String profileUrl = " /profileImg1.png";
 
     @Column(name = "profile_message")
     private String profileMessage;

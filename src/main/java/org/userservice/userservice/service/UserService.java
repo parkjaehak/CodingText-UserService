@@ -3,6 +3,7 @@ package org.userservice.userservice.service;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,9 @@ import org.userservice.userservice.controller.feignclient.BlogServiceClient;
 import org.userservice.userservice.domain.Tier;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
-import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
-import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
 import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
@@ -37,6 +36,8 @@ public class UserService {
     private final MinioFileUploadService minioFileUploadService;
     private final AdminServiceClient adminServiceClient;
     private final BlogServiceClient blogServiceClient;
+    @Value("${social.login.profile}")
+    private  String socialLoginProfile;
 
     public UserStatisticResponse findUserStatisticsByUserId(String userId) {
         User user = userRepository.findById(userId)
@@ -155,10 +156,12 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        try {
-            blogServiceClient.deleteBlog(userId);
-        } catch (FeignException e) {
-            throw new CreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
+        if (socialLoginProfile.equals("dev")) {
+            try {
+                blogServiceClient.deleteBlog(userId);
+            } catch (FeignException e) {
+                throw new CreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
+            }
         }
 
         userRepository.delete(user);
