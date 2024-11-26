@@ -4,12 +4,12 @@ package org.userservice.userservice.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.userservice.userservice.error.ErrorCode;
+import org.userservice.userservice.error.exception.TokenExpiredException;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -70,6 +70,7 @@ public class JwtProvider {
             log.error("Invalid JWT token, 유효하지 않은 jwt 토큰 입니다.");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token. 만료된 jwt 토큰 입니다.");
+            throw new TokenExpiredException(ErrorCode.TOKEN_EXPIRED, "token 만료", e);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }

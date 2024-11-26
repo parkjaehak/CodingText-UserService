@@ -18,18 +18,18 @@ public enum ErrorCode {
     NO_AUTHORITY(403, "C005", "권한이 없는 사용자입니다."),
     FILE_UPLOAD_FAILED(500, "C006", "파일 업로드에 실패했습니다."),
     CREATION_FAILED(500, "C007", "생성에 실패하였습니다"),
-    TOKEN_MISMATCH(404, "C008", "토큰타입이 불일치합니다."),
-    REFRESH_TOKEN_NOT_FOUND(404, "C009", "리프레시 토큰이 없거나 일치하지 않습니다."),
 
     //user
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
-
     //feign client
     ANNOUNCEMENT_NOT_FOUNT(404, "F001", "공지사항 정보 찾을 수 없습니다."),
-
     //object storage
     IMAGE_IO_FAILED(404, "I001", "이미지 버킷 접근 시 I/O 관련 에러가 발생하였습니다."),
-    IMAGE_FAILED_ETC(500, "I002", "이미지 버킷 접근 시 기타 에러가 발생하였습니다.");
+    IMAGE_FAILED_ETC(500, "I002", "이미지 버킷 접근 시 기타 에러가 발생하였습니다."),
+    //token
+    TOKEN_MISMATCH(404, "T001", "토큰타입이 불일치합니다."),
+    REFRESH_TOKEN_NOT_FOUND(404, "T002", "리프레시 토큰이 없거나 일치하지 않습니다."),
+    TOKEN_EXPIRED(401, "T003", "엑세스 토큰이 만료되었습니다.");
 
 
     private final int status;
