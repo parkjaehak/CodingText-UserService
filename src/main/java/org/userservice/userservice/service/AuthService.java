@@ -2,14 +2,14 @@ package org.userservice.userservice.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.auth.SignupRequest;
-import org.userservice.userservice.error.exception.UnauthenticatedException;
-import org.userservice.userservice.error.exception.UnauthorizedException;
-import org.userservice.userservice.error.exception.UserNotFoundException;
+import org.userservice.userservice.error.exception.*;
 import org.userservice.userservice.jwt.JwtProvider;
 import org.userservice.userservice.repository.UserRepository;
 
@@ -19,17 +19,24 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
-    public Claims validateAndExtractClaims(String token, AuthRole requiredRole) {
+    public Claims validateAndExtractClaims(String token, AuthRole requiredRole, String tokenType) {
         if (token == null) {
             throw new UnauthenticatedException("토큰 존재하지 않습니다.");
+        }
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 제거 (공백 포함 7글자)
         }
         if (!jwtProvider.validateToken(token)) {
             throw new UnauthenticatedException("토큰 유효하지 않습니다.");
         }
         Claims claims = jwtProvider.getUserInfoFromToken(token);
         String role = claims.get("role", String.class);
+        String type = claims.get("type", String.class);
         if (!role.equals(String.valueOf(requiredRole))) {
             throw new UnauthorizedException("권한이 없는 사용자");
+        }
+        if (!type.equals(tokenType)) {
+            throw new TokenTypeMismatchException("토큰 타입이 맞지 않음");
         }
         return claims;
     }

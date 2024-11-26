@@ -1,9 +1,13 @@
 package org.userservice.userservice.error.exception;
 
+import lombok.Getter;
 import org.userservice.userservice.error.ErrorCode;
 
-public class ImageCopyFailedException extends BusinessException{
-    public ImageCopyFailedException(ErrorCode errorCode, String message) {
-        super(message, errorCode);
+@Getter
+public class ImageCopyFailedException extends RuntimeException{
+    private final ErrorCode errorCode;
+    public ImageCopyFailedException(ErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
     }
 }

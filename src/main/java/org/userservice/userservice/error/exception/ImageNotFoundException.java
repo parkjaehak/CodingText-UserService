@@ -4,9 +4,12 @@ import lombok.Getter;
 import org.userservice.userservice.error.ErrorCode;
 
 @Getter
-public class ImageNotFoundException extends BusinessException {
+public class ImageNotFoundException extends RuntimeException {
 
-    public ImageNotFoundException(ErrorCode errorCode, String message) {
-        super(message, errorCode);
+    private final ErrorCode errorCode;
+
+    public ImageNotFoundException(ErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
     }
 }

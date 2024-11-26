@@ -14,6 +14,6 @@ public class JwtToken {
     @Schema(description = "Access token", example = "Bearer eyJhbGciOiJIUzUxMiJ9...")
     private final String accessToken;
 
-    @Schema(description = "Refresh token", example = "Bearer eyJhbGciOiJIUzUxMiJ9...", nullable = true)
+    @Schema(description = "Refresh token", example = "Bearer eyJhbGciOiJIUzUxMiJ9...")
     private final String refreshToken;
 }

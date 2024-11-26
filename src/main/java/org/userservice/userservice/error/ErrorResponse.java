@@ -1,7 +1,5 @@
 package org.userservice.userservice.error;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +17,8 @@ public class ErrorResponse {
     private int status;
     private String code;
     private String message;
-    private List<FieldError> errors;
+    private List<?> errors;
+
 
     private ErrorResponse(final ErrorCode code, final List<FieldError> errors) {
         this.status = code.getStatus();
@@ -40,6 +39,13 @@ public class ErrorResponse {
         this.errors = new ArrayList<>();
     }
 
+    private ErrorResponse(final ErrorCode code, final String message, final Throwable throwable) {
+        this.status = code.getStatus();
+        this.code = code.getCode();
+        this.message = message;
+        this.errors = extractErrors(throwable); // 에러 정보를 추출
+    }
+
     // BindingResult에 대한 ErrorResponse 객체 생성
     public static ErrorResponse of(final ErrorCode code, final BindingResult bindingResult) {
         return new ErrorResponse(code, FieldError.of(bindingResult));
@@ -53,11 +59,27 @@ public class ErrorResponse {
     public static ErrorResponse of(final ErrorCode code, final String message) {
         return new ErrorResponse(code, message);
     }
+    public static ErrorResponse of(final ErrorCode code, final String message, final Throwable throwable) {
+        return new ErrorResponse(code, message, throwable);
+    }
+
+    // 에러 메시지를 리스트로 추출
+    private List<String> extractErrors(Throwable throwable) {
+        List<String> errorMessages = new ArrayList<>();
+        while (throwable != null) {
+            errorMessages.add(throwable.toString()); // 예외 클래스명과 메시지를 포함
+            for (StackTraceElement element : throwable.getStackTrace()) {
+                errorMessages.add("at " + element.toString()); // 스택 트레이스 정보 추가
+            }
+            throwable = throwable.getCause(); // 원인 예외 탐색
+        }
+        return errorMessages;
+    }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
-    public static class FieldError {
+    public static class FieldError{
         private String field;
         private String value;
         private String reason;
