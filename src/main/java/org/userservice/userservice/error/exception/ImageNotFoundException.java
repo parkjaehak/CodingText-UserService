@@ -13,3 +13,4 @@ public class ImageNotFoundException extends RuntimeException {
         this.errorCode = errorCode;
     }
 }
+

@@ -17,6 +17,7 @@ import org.userservice.userservice.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
@@ -74,6 +75,7 @@ public class AuthService {
     }
 
     // RefreshToken 저장
+    @Transactional
     public void saveRefreshToken(String userId, String refreshToken) {
         RefreshToken token = new RefreshToken(userId, refreshToken);
         refreshTokenRepository.save(token);
@@ -83,10 +85,5 @@ public class AuthService {
     public String getRefreshToken(String userId) {
         RefreshToken token = refreshTokenRepository.findById(userId).orElse(null);
         return token != null ? token.getRefreshToken() : null;
-    }
-
-    // RefreshToken 삭제
-    public void deleteRefreshToken(String userId) {
-        refreshTokenRepository.deleteById(userId);
     }
 }

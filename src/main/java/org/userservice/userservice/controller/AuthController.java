@@ -12,6 +12,7 @@ import org.userservice.userservice.controller.feignclient.BlogServiceClient;
 import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.auth.SignupResponse;
+import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.error.exception.RefreshTokenNotFoundException;
 import org.userservice.userservice.jwt.JwtToken;
@@ -81,7 +82,7 @@ public class AuthController implements AuthApi {
         Claims claims = extractClaims(refreshToken, AuthRole.ROLE_USER_B, "refresh");
         String storedRefreshToken = authService.getRefreshToken(claims.getSubject());
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new RefreshTokenNotFoundException(HttpStatus.BAD_REQUEST,"Refresh Token 이 일치하지 않거나 없습니다.");
+            throw new RefreshTokenNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND,"Refresh Token 이 일치하지 않거나 없습니다.");
         }
         addTokensToResponse(response, claims.getSubject(), AuthRole.ROLE_USER_B);
         return ResponseEntity.ok(new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh")));

@@ -39,10 +39,10 @@ public class ErrorResponse {
         this.errors = new ArrayList<>();
     }
 
-    private ErrorResponse(final ErrorCode code, final String message, final Throwable throwable) {
+    private ErrorResponse(final ErrorCode code, final Throwable throwable) {
         this.status = code.getStatus();
         this.code = code.getCode();
-        this.message = message;
+        this.message = code.getMessage();
         this.errors = extractErrors(throwable); // 에러 정보를 추출
     }
 
@@ -59,8 +59,8 @@ public class ErrorResponse {
     public static ErrorResponse of(final ErrorCode code, final String message) {
         return new ErrorResponse(code, message);
     }
-    public static ErrorResponse of(final ErrorCode code, final String message, final Throwable throwable) {
-        return new ErrorResponse(code, message, throwable);
+    public static ErrorResponse of(final ErrorCode code, final Throwable throwable) {
+        return new ErrorResponse(code, throwable);
     }
 
     // 에러 메시지를 리스트로 추출

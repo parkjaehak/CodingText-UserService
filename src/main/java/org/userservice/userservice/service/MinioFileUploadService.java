@@ -84,9 +84,9 @@ public class MinioFileUploadService {
                 log.warn("minio에 이미지 객체를 찾을 수 없음:  " + objectName);
                 return false;
             }
-            throw new ImageNotFoundException(IMAGE_NOT_FOUND, "I/O 관련 에러로 인해 이미지 찾을 수 없음", e);
+            throw new ImageNotFoundException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 찾을 수 없음", e);
         } catch (Exception e) {
-            throw new ImageNotFoundException(IMAGE_NOT_FOUND, "기타 에러로 인해 이미지 찾을 수 없음", e);
+            throw new ImageNotFoundException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 찾을 수 없음", e);
         }
     }
 
@@ -106,9 +106,9 @@ public class MinioFileUploadService {
             // 영구 스토리지 경로 반환
             return baseUrl + "/" + minioConfig.getBucketName() + "/" + objectName;
         } catch (MinioException e) {
-            throw new ImageCopyFailedException(IMAGE_COPY_FAILED, "I/O 관련 에러로 인해 이미지 복사 불가능", e);
+            throw new ImageCopyFailedException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 복사 불가능", e);
         } catch (Exception e) {
-            throw new ImageCopyFailedException(IMAGE_COPY_FAILED, "기타 에러로 인해 이미지 복사 불가능", e);
+            throw new ImageCopyFailedException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 복사 불가능", e);
         }
     }
 
@@ -125,12 +125,12 @@ public class MinioFileUploadService {
             if ("NoSuchKey".equals(e.errorResponse().code())) {
                 log.warn("이미 삭제된 객체 또는 존재하지 않는 객체: {}", ObjectName);
             } else {
-                throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "MinIO 오류: " + e.getMessage(), e);
+                throw new ImageDeletionFailedException(IMAGE_FAILED_ETC, "MinIO 오류: " + e.getMessage(), e);
             }
         } catch (MinioException e) {
-            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "I/O 관련 에러로 인해 이미지 삭제 불가능", e);
+            throw new ImageDeletionFailedException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 삭제 불가능", e);
         } catch (Exception e) {
-            throw new ImageDeletionFailedException(IMAGE_DELETION_FAILED, "기타 에러로 인해 이미지 삭제 불가능", e);
+            throw new ImageDeletionFailedException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 삭제 불가능", e);
         }
     }
 }

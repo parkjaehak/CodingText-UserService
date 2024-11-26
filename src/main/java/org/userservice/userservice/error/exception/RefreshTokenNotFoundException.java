@@ -1,14 +1,15 @@
 package org.userservice.userservice.error.exception;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.userservice.userservice.error.ErrorCode;
 
 @Getter
 public class RefreshTokenNotFoundException extends RuntimeException {
-    private final HttpStatus status;
 
-    public RefreshTokenNotFoundException(HttpStatus status, String message) {
+    private final ErrorCode errorCode;
+
+    public RefreshTokenNotFoundException(ErrorCode errorCode, String message) {
         super(message);
-        this.status = status;
+        this.errorCode = errorCode;
     }
 }
