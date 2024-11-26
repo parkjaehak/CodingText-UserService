@@ -39,17 +39,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String providerName = ((OAuth2UserDetails) authentication.getPrincipal()).getProviderName();
         String role = authentication.getAuthorities().stream().findFirst().get().getAuthority();
 
-        //JWT 생성
-        String token = jwtProvider.createToken(providerName, role);
-        response.addCookie(CookieUtils.createCookie("Authorization", token, 60*60*60));
+        //토큰 발급
+        String accessToken = jwtProvider.createToken(providerName, "access", role, 1000 * 60 * 10L); //10분
+        String refreshToken = jwtProvider.createToken(providerName, "refresh", role,1000 * 60 * 60 * 24L); //24시간
 
         if (socialLoginProfile.equals("dev")) {
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-                response.sendRedirect("http://localhost:3000/auth?token=" + token + "&signedIn=false");
+                response.sendRedirect("http://localhost:3000/auth?access=" + accessToken + "&signedIn=false");
             } else {
-                response.sendRedirect("http://localhost:3000/auth?token=Bearer " + token + "&signedIn=true");
+                response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "$refresh=Bearer "+ refreshToken + "&signedIn=true");
             }
+
         } else if (socialLoginProfile.equals("local")) {
+            response.addCookie(CookieUtils.createCookie("Authorization", accessToken, 60*60*24)); //24시간
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
                 response.sendRedirect("http://localhost:8080/auth/signup/test");
             } else {

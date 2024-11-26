@@ -34,8 +34,8 @@ public class AuthService {
         return claims;
     }
 
-    public String createBearerToken(String userId, AuthRole role) {
-        return "Bearer " + jwtProvider.createToken(userId, String.valueOf(role));
+    public String createBearerToken(String userId, String type, AuthRole role, Long expireMs) {
+        return "Bearer " + jwtProvider.createToken(userId, type, String.valueOf(role), expireMs);
     }
 
     @Transactional

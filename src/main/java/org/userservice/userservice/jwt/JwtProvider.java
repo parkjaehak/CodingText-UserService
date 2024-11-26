@@ -33,7 +33,6 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24L; //액세스토큰 유효시간: 24 시간
 
     @Value("${spring.jwt.secret}")
     private String secret;
@@ -45,12 +44,13 @@ public class JwtProvider {
     }
 
     //Authentication: JWT 생성
-    public String createToken(String providerName, String role) {
+    public String createToken(String providerName, String type, String role, Long expireMs) {
         return Jwts.builder()
-                .subject(providerName) //AuthenticationException(AuthenticationEntryPoint 에서 검사)-> 확실하지 않음
-                .claim("role", role) //AccessDeniedException (AccessDeniedHandler 에서 검사)
+                .subject(providerName)
+                .claim("type", type)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                .expiration(new Date(System.currentTimeMillis() + expireMs))
                 .signWith(secretKey)
                 .compact();
     }
