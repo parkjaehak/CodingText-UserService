@@ -75,7 +75,6 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new SignupResponse(userId, newRole, new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh"))));
     }
 
-    //access token 만료시 새롭게 발급되는 로직
     @PostMapping("/reissue")
     public ResponseEntity<?> reissueToken(
             @RequestHeader(name = "Refresh", required = false) String refreshToken,
@@ -90,7 +89,6 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh")));
     }
 
-    //로그아웃 버튼을 직접 눌렀을 경우
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @RequestHeader(name = "UserId") String userId,

@@ -139,4 +139,15 @@ public interface AuthApi {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
             })
     ResponseEntity<?> reissueToken(String refreshToken, HttpServletResponse response);
+
+
+    @Operation(summary = "로그아웃",
+            description = "로그아웃 버튼을 누르거나 reissue 경로에서 리프레시 토큰이 유효하지 않을 경우 요청되는 경로",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    ResponseEntity<?> logout(String userId, HttpServletResponse response);
 }
