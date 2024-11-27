@@ -41,9 +41,12 @@ public class UserService {
     private  String socialLoginProfile;
     private final RedisRepository redisRepository;
 
-    public UserStatisticResponse findUserStatisticsByUserId(String userId) {
+    public UserStatisticResponse findUserStatisticsAndUpdateRankByUserId(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        Long newUserRank = redisRepository.getUserRank(userId);
+        userRepository.save(user.toBuilder().userRank(newUserRank).build());
 
         return UserStatisticResponse.builder()
                 .userId(user.getUserId())
@@ -51,7 +54,7 @@ public class UserService {
                 .totalScore(user.getTotalScore())
                 .registerCount(user.getRegisterCount())
                 .solvedCount(user.getSolvedCount())
-                .rank(user.getUserRank())
+                .rank(newUserRank)
                 .profileUrl(user.getProfileUrl())
                 .tier(user.getTier())
                 .build();
@@ -143,16 +146,15 @@ public class UserService {
 
     @Transactional
     public void calculateTierAndUpdateScore(UserScoreRequest userScoreRequest) {
-        // 1. 사용자 정보 조회
         User user = userRepository.findById(userScoreRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        // 2. 점수 업데이트
         int updatedScore = user.getTotalScore() + userScoreRequest.getScore();
         Tier newTier = Tier.fromScore(updatedScore);
-        // 3. Redis에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
+
+        //redis 에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
         redisRepository.updateScore(userScoreRequest.getUserId(), updatedScore);
         long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());
-        // 5. 사용자 티어 및 점수 저장
+
         userRepository.save(user.toBuilder()
                 .totalScore(updatedScore)
                 .userRank(userRank)

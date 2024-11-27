@@ -26,7 +26,7 @@ public class UserController implements UserApi {
     @Override
     @GetMapping("/statistics")
     public ResponseEntity<?> findUserStatistics(@RequestHeader("UserId") String userId) {
-        return ResponseEntity.ok(userService.findUserStatisticsByUserId(userId));
+        return ResponseEntity.ok(userService.findUserStatisticsAndUpdateRankByUserId(userId));
     }
 
     @Override

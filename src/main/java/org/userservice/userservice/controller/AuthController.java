@@ -26,7 +26,6 @@ public class AuthController implements AuthApi {
 
     private final AuthService authService;
     private final BlogServiceClient blogServiceClient;
-    private final JwtProvider jwtProvider;
 
     @Override
     @GetMapping("/cookie-to-header")
