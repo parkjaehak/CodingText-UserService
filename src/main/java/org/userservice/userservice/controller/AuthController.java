@@ -12,7 +12,7 @@ import org.userservice.userservice.domain.AuthRole;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.auth.SignupResponse;
 import org.userservice.userservice.error.ErrorCode;
-import org.userservice.userservice.error.exception.CreationException;
+import org.userservice.userservice.error.exception.BlogCreationException;
 import org.userservice.userservice.error.exception.RefreshTokenDoesNotMatchException;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.service.AuthService;
@@ -65,7 +65,7 @@ public class AuthController implements AuthApi {
         try {
             blogServiceClient.createBlog(userId);
         } catch (FeignException e) {
-            throw new CreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
+            throw new BlogCreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
         }
         AuthRole newRole = authService.signup(signupRequest, userId);
         invalidateAuthorizationCookie(response);

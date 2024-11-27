@@ -17,12 +17,14 @@ public enum ErrorCode {
     AUTHENTICATION_NOT_FOUND(401, "C004", "인증되지 않은 사용자입니다."),
     NO_AUTHORITY(403, "C005", "권한이 없는 사용자입니다."),
     FILE_UPLOAD_FAILED(500, "C006", "파일 업로드에 실패했습니다."),
-    CREATION_FAILED(500, "C007", "생성에 실패하였습니다"),
 
     //user
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
     //feign client
     ANNOUNCEMENT_NOT_FOUNT(404, "F001", "공지사항 정보 찾을 수 없습니다."),
+    BLOG_CREATION_FAILED(500, "C007", "생성에 실패하였습니다"),
+    BLOG_DELETION_FAILED(500, "C008", "삭제에 실패하였습니다"),
+
     //object storage
     IMAGE_IO_FAILED(404, "I001", "이미지 버킷 접근 시 I/O 관련 에러가 발생하였습니다."),
     IMAGE_FAILED_ETC(500, "I002", "이미지 버킷 접근 시 기타 에러가 발생하였습니다."),

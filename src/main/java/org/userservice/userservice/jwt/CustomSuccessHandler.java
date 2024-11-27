@@ -56,7 +56,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } else if (socialLoginProfile.equals("local")) {
             response.addCookie(CookieUtils.createCookie("Authorization", accessToken, 60*60*24)); //24시간
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-                response.sendRedirect("http://localhost:8080/auth/signup/test");
+                response.sendRedirect("http://localhost:8080/auth/prod/signup");
             } else {
                 response.sendRedirect("http://localhost:8080/auth/cookie-to-header");
             }

@@ -22,8 +22,8 @@ import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
+import org.userservice.userservice.error.exception.BlogDeletionException;
 import org.userservice.userservice.error.exception.BusinessException;
-import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.RedisRepository;
 import org.userservice.userservice.repository.UserRepository;
@@ -172,7 +172,7 @@ public class UserService {
             try {
                 blogServiceClient.deleteBlog(userId);
             } catch (FeignException e) {
-                throw new CreationException("블로그 생성 요청 중 예외 발생: " + e.getMessage());
+                throw new BlogDeletionException("블로그 삭제 요청 중 예외 발생: " + e.getMessage());
             }
         }
 
