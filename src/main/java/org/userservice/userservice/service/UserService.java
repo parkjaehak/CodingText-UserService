@@ -78,7 +78,7 @@ public class UserService {
         log.info("새로 들어온 이미지={}", inputUrl);
 
         // 정규표현식: " /profileImg1.png" ~ " /profileImg6.png"와 일치하는지 확인
-        String defaultProfileRegex = " /profileImg[1-6]\\.png";
+        String defaultProfileRegex = "/profileImg[1-6]\\.png";
         String saveUrl;
         if (dbUrl.matches(defaultProfileRegex) && inputUrl.matches(defaultProfileRegex)) {
             log.info("기본 -> 기본");

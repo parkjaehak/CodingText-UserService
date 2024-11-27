@@ -2,7 +2,6 @@ package org.userservice.userservice.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -59,8 +58,8 @@ public class GlobalExceptionHandler {
     }
 
     //토큰 관련 에러
-    @ExceptionHandler(RefreshTokenNotFoundException.class)
-    protected ResponseEntity<ErrorResponse> refreshExHandle(RefreshTokenNotFoundException e) {
+    @ExceptionHandler(RefreshTokenDoesNotMatchException.class)
+    protected ResponseEntity<ErrorResponse> refreshExHandle(RefreshTokenDoesNotMatchException e) {
         log.error("Refresh Token Not Found: {}", e.getMessage(), e);
         final ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e);
         return new ResponseEntity<>(response, HttpStatus.valueOf(e.getErrorCode().getStatus()));

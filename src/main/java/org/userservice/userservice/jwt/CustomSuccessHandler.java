@@ -50,7 +50,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 response.sendRedirect("http://localhost:3000/auth?access=" + accessToken + "&signedIn=false");
             } else {
                 authService.saveRefreshToken(providerName, "Bearer " + refreshToken);
-                response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "$refresh=Bearer "+ refreshToken + "&signedIn=true");
+                response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer "+ refreshToken + "&signedIn=true");
             }
 
         } else if (socialLoginProfile.equals("local")) {

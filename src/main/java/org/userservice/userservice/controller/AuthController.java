@@ -13,7 +13,8 @@ import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.dto.auth.SignupResponse;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.CreationException;
-import org.userservice.userservice.error.exception.RefreshTokenNotFoundException;
+import org.userservice.userservice.error.exception.RefreshTokenDoesNotMatchException;
+import org.userservice.userservice.jwt.JwtProvider;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.utils.CookieUtils;
@@ -25,6 +26,7 @@ public class AuthController implements AuthApi {
 
     private final AuthService authService;
     private final BlogServiceClient blogServiceClient;
+    private final JwtProvider jwtProvider;
 
     @Override
     @GetMapping("/cookie-to-header")
@@ -73,6 +75,7 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new SignupResponse(userId, newRole, new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh"))));
     }
 
+    //access token 만료시 새롭게 발급되는 로직
     @PostMapping("/reissue")
     public ResponseEntity<?> reissueToken(
             @RequestHeader(name = "Refresh", required = false) String refreshToken,
@@ -81,10 +84,22 @@ public class AuthController implements AuthApi {
         Claims claims = extractClaims(refreshToken, AuthRole.ROLE_USER_B, "refresh");
         String storedRefreshToken = authService.getRefreshToken(claims.getSubject());
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new RefreshTokenNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND,"Refresh Token 이 일치하지 않거나 없습니다.");
+            throw new RefreshTokenDoesNotMatchException(ErrorCode.REFRESH_TOKEN_NOT_FOUND,"Refresh Token 이 일치하지 않습니다.");
         }
         addTokensToResponse(response, claims.getSubject(), AuthRole.ROLE_USER_B);
         return ResponseEntity.ok(new JwtToken(response.getHeader("Authorization"), response.getHeader("Refresh")));
+    }
+
+    //로그아웃 버튼을 직접 눌렀을 경우
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @RequestHeader(name = "UserId") String userId,
+            HttpServletResponse response) {
+
+        authService.deleteRefreshToken(userId);
+        response.addHeader("Authorization", null);
+        response.addHeader("Refresh", null);
+        return ResponseEntity.ok(new JwtToken(null,null));
     }
 
 

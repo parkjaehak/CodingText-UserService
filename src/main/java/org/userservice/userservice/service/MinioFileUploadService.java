@@ -66,31 +66,6 @@ public class MinioFileUploadService {
         }
     }
 
-
-    //TODO: 필요성 확인
-    private boolean isImageInTempBucket(String objectName) {
-        try {
-            minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(minioConfig.getTempBucketName())
-                            .object(objectName)
-                            .build());
-            return true; // 객체가 존재
-
-        } catch (MinioException e) {
-            String errorMessage = e.getMessage();
-            if (errorMessage.contains("does not exist") || errorMessage.contains("NoSuchKey")) {
-                // 객체가 없는 경우
-                log.warn("minio에 이미지 객체를 찾을 수 없음:  " + objectName);
-                return false;
-            }
-            throw new ImageNotFoundException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 찾을 수 없음", e);
-        } catch (Exception e) {
-            throw new ImageNotFoundException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 찾을 수 없음", e);
-        }
-    }
-
-
     private String copyTempImageToPermanentBucket(String objectName, String baseUrl) {
         try {
             minioClient.copyObject(
@@ -131,6 +106,29 @@ public class MinioFileUploadService {
             throw new ImageDeletionFailedException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 삭제 불가능", e);
         } catch (Exception e) {
             throw new ImageDeletionFailedException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 삭제 불가능", e);
+        }
+    }
+
+    //TODO: 필요성 확인
+    private boolean isImageInTempBucket(String objectName) {
+        try {
+            minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(minioConfig.getTempBucketName())
+                            .object(objectName)
+                            .build());
+            return true; // 객체가 존재
+
+        } catch (MinioException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("does not exist") || errorMessage.contains("NoSuchKey")) {
+                // 객체가 없는 경우
+                log.warn("minio에 이미지 객체를 찾을 수 없음:  " + objectName);
+                return false;
+            }
+            throw new ImageNotFoundException(IMAGE_IO_FAILED, "I/O 관련 에러로 인해 이미지 찾을 수 없음", e);
+        } catch (Exception e) {
+            throw new ImageNotFoundException(IMAGE_FAILED_ETC, "기타 에러로 인해 이미지 찾을 수 없음", e);
         }
     }
 }
