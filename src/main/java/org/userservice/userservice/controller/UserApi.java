@@ -95,9 +95,9 @@ public interface UserApi {
                     @ApiResponse(responseCode = "200", description = "성공적으로 유저 정보를 조회",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoForBlogResponse.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> findUserInfoForBlogService(String userId);
 
@@ -110,9 +110,9 @@ public interface UserApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "공지사항목록 조회 성공"),
                     @ApiResponse(responseCode = "404", description = "공지사항을 조회하지 못했습니다.",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> getAnnouncementsFromAdminService(int page, int size);
 
@@ -122,9 +122,9 @@ public interface UserApi {
                     @ApiResponse(responseCode = "200", description = "공지사항 상세정보 조회 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AnnounceDetailResponse.class))),
                     @ApiResponse(responseCode = "404", description = "공지사항을 조회하지 못했습니다.",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> getAnnouncementDetailsFromAdminService(@Parameter(description = "공지사항 ID") long announceId);
 
@@ -134,9 +134,9 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "점수 및 티어 업데이트 완료",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                    content = @Content(mediaType = "application/json"))
     })
     ResponseEntity<?> updateScore(UserScoreRequest userScoreRequest);
 
@@ -146,9 +146,9 @@ public interface UserApi {
                     @ApiResponse(responseCode = "200", description = "회원 삭제 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDeletionResponse.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> deleteUser(String userId);
 }

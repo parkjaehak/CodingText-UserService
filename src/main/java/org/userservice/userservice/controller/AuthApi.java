@@ -103,24 +103,24 @@ public interface AuthApi {
                     }
                     ))
     })
-    ResponseEntity<?> signupTest(SignupRequest signupRequest,
+    ResponseEntity<?> signupProd(SignupRequest signupRequest,
                              @Parameter(description = "Authorization token from cookie")String token,
                              HttpServletResponse response);
 
 
 
-    @Operation(summary = "회원가입 (on-prem)",
+    @Operation(summary = "회원가입",
             description = "개발환경에서 쿠키를 이용한 토큰 전달불가로 소셜로그인 시 query parameter 로 토큰 전달 후 최초로그인 유저가 접근하는 엔드포인트.<br>" +
                     "Bearer prefix 와 함께 header 로 전달받은 후 새로운 ROLE 을 적용하여 JWT 를 발급한다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "회원가입 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignupResponse.class))),
                     @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> signup(SignupRequest signupRequest, String token, HttpServletResponse response);
 
@@ -130,13 +130,13 @@ public interface AuthApi {
                     @ApiResponse(responseCode = "200", description = "새 토큰 발급 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
                     @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "404", description = "토큰 타입이 맞지 않음(access, refresh)",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                            content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> reissueToken(String refreshToken, HttpServletResponse response);
 
@@ -147,7 +147,7 @@ public interface AuthApi {
                     @ApiResponse(responseCode = "200", description = "로그아웃 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> logout(String userId, HttpServletResponse response);
 }

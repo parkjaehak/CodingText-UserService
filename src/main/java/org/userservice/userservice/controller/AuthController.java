@@ -14,7 +14,6 @@ import org.userservice.userservice.dto.auth.SignupResponse;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.error.exception.RefreshTokenDoesNotMatchException;
-import org.userservice.userservice.jwt.JwtProvider;
 import org.userservice.userservice.jwt.JwtToken;
 import org.userservice.userservice.service.AuthService;
 import org.userservice.userservice.utils.CookieUtils;
@@ -40,8 +39,8 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    @PostMapping("/signup/test")
-    public ResponseEntity<?> signupTest(
+    @PostMapping("/prod/signup")
+    public ResponseEntity<?> signupProd(
             @Validated @RequestBody SignupRequest signupRequest,
             @CookieValue(name = "Authorization", required = false) String accessToken,
             HttpServletResponse response) {

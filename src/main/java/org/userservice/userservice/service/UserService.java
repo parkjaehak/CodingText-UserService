@@ -46,7 +46,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        Long newUserRank = redisRepository.getUserRank(userId);
+        long newUserRank = redisRepository.getUserRank(userId);
         userRepository.save(user.toBuilder().userRank(newUserRank).build());
 
         return UserStatisticResponse.builder()
