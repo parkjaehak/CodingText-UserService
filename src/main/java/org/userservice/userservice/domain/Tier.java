@@ -8,14 +8,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Tier {
-    KING(1000, "킹 등급"),
-    SENIOR(700, "시니어 등급"),
-    JUNIOR(500, "주니어 등급"),
-    SOPHOMORE(300, "소포모어 등급"),
-    FRESHMAN(0, "프레시맨 등급");
+    KING(1000, "킹 등급", "King"),
+    SENIOR(700, "시니어","Senior"),
+    JUNIOR(500, "주니어 등급", "Junior"),
+    SOPHOMORE(300, "소포모어 등급", "Sophomore"),
+    FRESHMAN(0, "프레시맨 등급", "freshman");
 
     private final int minScore;
     private final String description;
+    private final String value;
 
     public static Tier fromScore(int score) {
         for (Tier tier : values()) {
@@ -24,5 +25,20 @@ public enum Tier {
             }
         }
         return FRESHMAN;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @JsonCreator
+    public static Tier fromValue(String value) {
+        for (Tier tier : Tier.values()) {
+            if (tier.value.equalsIgnoreCase(value)) {
+                return tier;
+            }
+        }
+        throw new IllegalArgumentException("Unknown Tier value: " + value);
     }
 }

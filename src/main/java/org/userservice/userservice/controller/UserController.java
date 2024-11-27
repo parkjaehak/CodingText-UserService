@@ -64,6 +64,7 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
     }
 
+    //code-service -> user-service
     @Override
     @PutMapping("/score")
     public ResponseEntity<?> updateScore(@RequestBody UserScoreRequest userScoreRequest) {

@@ -53,7 +53,7 @@ public class User extends BaseEntity {
 
     @Column(name = "user_rank")
     @Builder.Default
-    private Integer userRank = 0; //사용자 순위
+    private Long userRank = 0L; //사용자 순위
 
     @Enumerated(EnumType.STRING)
     @Builder.Default

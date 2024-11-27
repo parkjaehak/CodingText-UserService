@@ -25,7 +25,7 @@ import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.CreationException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
-//import org.userservice.userservice.repository.RedisRepository;
+import org.userservice.userservice.repository.RedisRepository;
 import org.userservice.userservice.repository.UserRepository;
 
 @Service
@@ -39,7 +39,7 @@ public class UserService {
     private final BlogServiceClient blogServiceClient;
     @Value("${social.login.profile}")
     private  String socialLoginProfile;
-    //private final RedisRepository redisRepository;
+    private final RedisRepository redisRepository;
 
     public UserStatisticResponse findUserStatisticsByUserId(String userId) {
         User user = userRepository.findById(userId)
@@ -144,18 +144,16 @@ public class UserService {
         // 1. 사용자 정보 조회
         User user = userRepository.findById(userScoreRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
         // 2. 점수 업데이트
         int updatedScore = user.getTotalScore() + userScoreRequest.getScore();
         Tier newTier = Tier.fromScore(updatedScore);
-
-/*        // 3. Redis에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
+        // 3. Redis에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
         redisRepository.updateScore(userScoreRequest.getUserId(), updatedScore);
-        Long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());*/
-
-        // 4. 사용자 티어 및 점수 저장
+        long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());
+        // 5. 사용자 티어 및 점수 저장
         userRepository.save(user.toBuilder()
                 .totalScore(updatedScore)
+                .userRank(userRank)
                 .tier(newTier)
                 .build());
     }

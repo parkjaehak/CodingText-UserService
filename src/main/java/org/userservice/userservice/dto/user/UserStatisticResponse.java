@@ -27,7 +27,7 @@ public class UserStatisticResponse {
     private int totalScore;
 
     @Schema(description = "등수", example = "5")
-    private int rank;
+    private long rank;
 
     @Schema(description = "티어", example = "KING")
     private Tier tier;
