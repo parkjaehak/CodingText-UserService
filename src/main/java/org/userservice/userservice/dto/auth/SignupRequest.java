@@ -26,6 +26,6 @@ public class SignupRequest {
     @NotNull(message = "소셜 계정 프로필 사진 사용 여부는 필수입니다.")
     private Boolean useSocialProfile;
 
-    @Schema(description = "기본 프로필 사진 경로", example = " /profileImg1.png")
+    @Schema(description = "기본 프로필 사진 경로", example = "/profileImg1.png")
     private String basicProfileUrl;
 }

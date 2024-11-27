@@ -19,6 +19,6 @@ public class RedisRepository {
     // 사용자 순위 반환 (1위부터 시작)
     public Long getUserRank(String userId) {
         Long rank = redisTemplate.opsForZSet().reverseRank(REDIS_KEY_USER_SCORES, userId);
-        return (rank != null) ? rank + 1 : null;
+        return (rank != null) ? rank + 1 : 0L;  // null 대신 0L 반환
     }
 }
