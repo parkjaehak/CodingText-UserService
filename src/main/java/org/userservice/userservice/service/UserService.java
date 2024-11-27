@@ -53,6 +53,7 @@ public class UserService {
                 .solvedCount(user.getSolvedCount())
                 .rank(user.getUserRank())
                 .profileUrl(user.getProfileUrl())
+                .tier(user.getTier())
                 .build();
     }
 
@@ -66,6 +67,7 @@ public class UserService {
                 .profileUrl(user.getProfileUrl())
                 .profileMessage(user.getProfileMessage())
                 .codeLanguage(user.getCodeLanguage())
+                .tier(user.getTier())
                 .build();
     }
 
