@@ -46,7 +46,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        Long newUserRank = redisRepository.getUserRank(userId);
+        long newUserRank = redisRepository.getUserRank(userId);
         userRepository.save(user.toBuilder().userRank(newUserRank).build());
 
         return UserStatisticResponse.builder()
@@ -150,14 +150,16 @@ public class UserService {
         User user = userRepository.findById(userScoreRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
         int updatedScore = user.getTotalScore() + userScoreRequest.getScore();
+        int updatedSolvedCount = user.getSolvedCount() + 1;
         Tier newTier = Tier.fromScore(updatedScore);
 
         //redis 에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
-        redisRepository.updateScore(userScoreRequest.getUserId(), updatedScore);
-        Long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());
+        redisRepository.updateScore(userScoreRequest.getUserId(), updatedScore, updatedSolvedCount);
+        long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());
 
         userRepository.save(user.toBuilder()
                 .totalScore(updatedScore)
+                .solvedCount(updatedSolvedCount)
                 .userRank(userRank)
                 .tier(newTier)
                 .build());

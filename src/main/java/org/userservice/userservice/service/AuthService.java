@@ -12,6 +12,7 @@ import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.auth.SignupRequest;
 import org.userservice.userservice.error.exception.*;
 import org.userservice.userservice.jwt.JwtProvider;
+import org.userservice.userservice.repository.RedisRepository;
 import org.userservice.userservice.repository.RefreshTokenRepository;
 import org.userservice.userservice.repository.UserRepository;
 
@@ -22,6 +23,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisRepository redisRepository;
 
     public Claims validateAndExtractClaims(String token, AuthRole requiredRole, String tokenType) {
         if (token == null) {
@@ -54,6 +56,9 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
+        redisRepository.updateScore(userId, user.getTotalScore(), user.getSolvedCount());
+        long userRank = redisRepository.getUserRank(userId);
+
         User updateUser = null;
         if (signupRequest.getUseSocialProfile()) {
             //소셜계정의 프로필을 사용
@@ -61,6 +66,7 @@ public class AuthService {
                     .nickName(signupRequest.getNickName())
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
+                    .userRank(userRank)
                     .build();
         } else {
             updateUser = user.toBuilder()
@@ -68,6 +74,7 @@ public class AuthService {
                     .codeLanguage(signupRequest.getCodeLanguage())
                     .role(AuthRole.ROLE_USER_B)
                     .profileUrl(signupRequest.getBasicProfileUrl())
+                    .userRank(userRank)
                     .build();
         }
         userRepository.save(updateUser);

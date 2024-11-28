@@ -4,6 +4,7 @@ import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import org.userservice.userservice.utils.CookieUtils;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController implements AuthApi {
 
     private final AuthService authService;
@@ -79,8 +81,12 @@ public class AuthController implements AuthApi {
             HttpServletResponse response) {
 
         Claims claims = extractClaims(refreshToken, AuthRole.ROLE_USER_B, "refresh");
+        log.info("현재 refresh token: {}", refreshToken);
         String storedRefreshToken = authService.getRefreshToken(claims.getSubject());
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            log.info("여기서 토큰이 불일치하는가?");
+            log.info("여기서 refreshToken={}", refreshToken);
+            log.info("여기서 storedRefreshToken={}",storedRefreshToken);
             throw new RefreshTokenDoesNotMatchException(ErrorCode.REFRESH_TOKEN_NOT_FOUND,"Refresh Token 이 일치하지 않습니다.");
         }
         addTokensToResponse(response, claims.getSubject(), AuthRole.ROLE_USER_B);
