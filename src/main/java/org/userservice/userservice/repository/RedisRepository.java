@@ -27,4 +27,9 @@ public class RedisRepository {
             return rank + 1;
         }
     }
+
+    // Redis에서 사용자 점수를 삭제하는 메서드
+    public void deleteUserScore(String userId) {
+        redisTemplate.opsForZSet().remove(REDIS_KEY_USER_SCORES, userId);
+    }
 }

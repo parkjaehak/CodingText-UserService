@@ -26,6 +26,7 @@ import org.userservice.userservice.error.exception.BlogDeletionException;
 import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.RedisRepository;
+import org.userservice.userservice.repository.RefreshTokenRepository;
 import org.userservice.userservice.repository.UserRepository;
 
 @Service
@@ -40,6 +41,7 @@ public class UserService {
     @Value("${social.login.profile}")
     private  String socialLoginProfile;
     private final RedisRepository redisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public UserStatisticResponse findUserStatisticsAndUpdateRankByUserId(String userId) {
@@ -177,6 +179,8 @@ public class UserService {
                 throw new BlogDeletionException("블로그 삭제 요청 중 예외 발생: " + e.getMessage());
             }
         }
+        redisRepository.deleteUserScore(userId); //회원탈퇴시 redis에 저장된 score 및 refresh token 삭제
+        refreshTokenRepository.deleteById(userId);
 
         userRepository.delete(user);
         return new UserDeletionResponse(user.getUserId(), user.getUserName());
