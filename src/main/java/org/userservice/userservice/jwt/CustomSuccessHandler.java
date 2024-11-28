@@ -42,7 +42,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = authentication.getAuthorities().stream().findFirst().get().getAuthority();
 
         //토큰 발급
-        String accessToken = jwtProvider.createToken(providerName, "access", role, 1000 * 30L); //30초
+        String accessToken = jwtProvider.createToken(providerName, "access", role, 1000 * 60 * 10L); // 10분
         String refreshToken = jwtProvider.createToken(providerName, "refresh", role,1000 * 60 * 60 * 24L); //24시간
 
         if (socialLoginProfile.equals("dev")) {
