@@ -24,6 +24,7 @@ public enum ErrorCode {
     ANNOUNCEMENT_NOT_FOUNT(404, "F001", "공지사항 정보 찾을 수 없습니다."),
     BLOG_CREATION_FAILED(500, "C007", "생성에 실패하였습니다"),
     BLOG_DELETION_FAILED(500, "C008", "삭제에 실패하였습니다"),
+    BLOG_FIND_FAILED(500,"C009", "조회에 실패하였습니다."),
 
     //object storage
     IMAGE_IO_FAILED(404, "I001", "이미지 버킷 접근 시 I/O 관련 에러가 발생하였습니다."),

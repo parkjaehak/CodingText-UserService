@@ -23,6 +23,7 @@ import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
 import org.userservice.userservice.error.exception.BlogDeletionException;
+import org.userservice.userservice.error.exception.BlogFindException;
 import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
 import org.userservice.userservice.repository.RedisRepository;
@@ -39,7 +40,7 @@ public class UserService {
     private final AdminServiceClient adminServiceClient;
     private final BlogServiceClient blogServiceClient;
     @Value("${social.login.profile}")
-    private  String socialLoginProfile;
+    private String socialLoginProfile;
     private final RedisRepository redisRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -67,6 +68,19 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
+        Long blogId = null;
+        if (socialLoginProfile.equals("dev")) {
+            try {
+                ResponseEntity<Long> response = blogServiceClient.findBlog(user.getUserId());
+                blogId = response.getBody();
+                if (blogId == null) {
+                    throw new BlogFindException("블로그 아이디가 없습니다.");
+                }
+            } catch (FeignException e) {
+                throw new BlogFindException("블로그 조회 요청 중 예외 발생: " + e.getMessage());
+            }
+        }
+
         return UserInfoResponse.builder()
                 .userId(user.getUserId())
                 .nickName(user.getNickName())
@@ -74,6 +88,7 @@ public class UserService {
                 .profileMessage(user.getProfileMessage())
                 .codeLanguage(user.getCodeLanguage())
                 .tier(user.getTier())
+                .blogId(blogId)
                 .build();
     }
 
@@ -99,7 +114,7 @@ public class UserService {
         } else if (inputUrl.matches(defaultProfileRegex)) {
             log.info("영구 -> 기본");
             saveUrl = minioFileUploadService.handlePermanentToDefault(inputUrl, dbUrl);
-        }else{
+        } else {
             log.info("영구 -> 임시");
             saveUrl = minioFileUploadService.handlePermanentToTemp(inputUrl, dbUrl);
         }

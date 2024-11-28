@@ -28,4 +28,7 @@ public class UserInfoResponse {
 
     @Schema(description = "티어", example = "KING")
     private Tier tier;
+
+    @Schema(description = "블로그 아이디", example = "1")
+    private Long blogId;
 }

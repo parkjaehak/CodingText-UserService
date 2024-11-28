@@ -115,7 +115,9 @@ public interface AuthApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "회원가입 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignupResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
+                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 유효하지 않은 경우)",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "402", description = "토큰 만료",
                             content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
                             content = @Content(mediaType = "application/json")),
@@ -129,7 +131,9 @@ public interface AuthApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "새 토큰 발급 성공",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
-                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 없는 경우, 토큰이 유효하지 않은 경우)",
+                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자(토큰이 유효하지 않은 경우)",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "402", description = "토큰 만료",
                             content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "403", description = "권한이 없는 사용자(ROLE 일치하지 않은 경우)",
                             content = @Content(mediaType = "application/json")),
