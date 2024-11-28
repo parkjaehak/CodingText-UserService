@@ -31,7 +31,7 @@ public enum ErrorCode {
     //token
     TOKEN_MISMATCH(404, "T001", "토큰타입이 불일치합니다."),
     REFRESH_TOKEN_NOT_FOUND(404, "T002", "리프레시 토큰이 없거나 일치하지 않습니다."),
-    TOKEN_EXPIRED(401, "T003", "엑세스 토큰이 만료되었습니다.");
+    TOKEN_EXPIRED(402, "T003", "엑세스 토큰이 만료되었습니다.");
 
 
     private final int status;
