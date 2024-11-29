@@ -100,6 +100,6 @@ public class AuthService {
     }
 
     public boolean checkNicknameDuplicate(String nickname) {
-        return userRepository.existsByNickname(nickname);
+        return userRepository.existsByNickName(nickname);
     }
 }

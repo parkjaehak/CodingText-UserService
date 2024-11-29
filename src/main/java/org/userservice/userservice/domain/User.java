@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "nick_name")
+    @Column(name = "nick_name", unique = true)
     private String nickName; //TODO: default varchar(255)를 각 컬럼에 맞게 변경
 
     @Column(name = "user_name")
