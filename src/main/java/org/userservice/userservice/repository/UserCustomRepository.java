@@ -7,5 +7,5 @@ import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 
 public interface UserCustomRepository {
     UserInfoForBlogResponse findUserInfoForBlogByUserId(String userId);
-    Page<User> findAllWithFilters(String nickName, String email, Pageable pageable);
+    Page<User> findAllWithFilters(String input, Pageable pageable);
 }

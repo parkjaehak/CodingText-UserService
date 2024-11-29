@@ -205,11 +205,11 @@ public class UserService {
         return new UserDeletionResponse(user.getUserId(), user.getUserName());
     }
 
-    public Page<UserListResponse> getUserList(int page, int size, String nickName, String email) {
+    public Page<UserListResponse> getUserList(int page, int size, String input) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         // 동적 필터링 쿼리 호출
-        Page<User> userPage = userRepository.findAllWithFilters(nickName, email, pageable);
+        Page<User> userPage = userRepository.findAllWithFilters(input, pageable);
 
         // Response 변환
         return userPage.map(user -> UserListResponse.builder()

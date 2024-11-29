@@ -83,10 +83,9 @@ public class UserController implements UserApi {
     public ResponseEntity<Page<UserListResponse>> getUserList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String nickName,
-            @RequestParam(required = false) String email) {
+            @RequestParam(required = false) String input) {
 
-        Page<UserListResponse> userList = userService.getUserList(page, size, nickName, email);
+        Page<UserListResponse> userList = userService.getUserList(page, size, input);
         return ResponseEntity.ok(userList);
     }
 }

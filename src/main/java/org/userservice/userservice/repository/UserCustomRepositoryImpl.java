@@ -38,18 +38,16 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public Page<User> findAllWithFilters(String nickName, String email, Pageable pageable) {
+    public Page<User> findAllWithFilters(String input, Pageable pageable) {
         QUser user = QUser.user;
 
         // 기본 쿼리 작성
         JPQLQuery<User> query = queryFactory.selectFrom(user);
 
-        // 필터 조건 추가
-        if (nickName != null && !nickName.isEmpty()) {
-            query.where(user.nickName.containsIgnoreCase(nickName));
-        }
-        if (email != null && !email.isEmpty()) {
-            query.where(user.email.containsIgnoreCase(email));
+        // 필터 조건 추가 (닉네임 또는 이메일에 유사한 결과)
+        if (input != null && !input.isEmpty()) {
+            query.where(user.nickName.containsIgnoreCase(input)
+                    .or(user.email.containsIgnoreCase(input)));
         }
 
         // 페이징 처리
