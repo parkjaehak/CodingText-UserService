@@ -13,6 +13,7 @@ import org.userservice.userservice.dto.adminclient.AnnounceResponse;
 import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
 import org.userservice.userservice.dto.user.UserInfoRequest;
 import org.userservice.userservice.dto.user.UserInfoResponse;
+import org.userservice.userservice.dto.user.UserListResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.service.UserService;
 
@@ -76,5 +77,16 @@ public class UserController implements UserApi {
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@RequestHeader("UserId") String userId) {
         return ResponseEntity.ok(userService.deleteUser(userId));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<UserListResponse>> getUserList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String nickName,
+            @RequestParam(required = false) String email) {
+
+        Page<UserListResponse> userList = userService.getUserList(page, size, nickName, email);
+        return ResponseEntity.ok(userList);
     }
 }

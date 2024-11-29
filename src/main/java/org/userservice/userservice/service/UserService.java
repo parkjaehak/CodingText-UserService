@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,6 +133,7 @@ public class UserService {
                 .profileUrl(saveUrl)
                 .profileMessage(updateUser.getProfileMessage())
                 .codeLanguage(updateUser.getCodeLanguage())
+                .tier(updateUser.getTier())
                 .build();
     }
 
@@ -199,5 +203,21 @@ public class UserService {
 
         userRepository.delete(user);
         return new UserDeletionResponse(user.getUserId(), user.getUserName());
+    }
+
+    public Page<UserListResponse> getUserList(int page, int size, String nickName, String email) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        // 동적 필터링 쿼리 호출
+        Page<User> userPage = userRepository.findAllWithFilters(nickName, email, pageable);
+
+        // Response 변환
+        return userPage.map(user -> UserListResponse.builder()
+                .userId(user.getUserId())
+                .nickName(user.getNickName())
+                .email(user.getEmail())
+                .tier(user.getTier())
+                .registerDate(user.getCreatedAt().toLocalDate())
+                .build());
     }
 }
