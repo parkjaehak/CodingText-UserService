@@ -5,4 +5,5 @@ import org.userservice.userservice.domain.User;
 
 public interface UserRepository extends JpaRepository<User, String>, UserCustomRepository{
 
+    boolean existsByNickname(String nickname);
 }

@@ -104,8 +104,10 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(new JwtToken(null,null));
     }
 
-
-
+    @PostMapping("/nickname")
+    public ResponseEntity<?> validNickname(@RequestParam("nickname") String nickname) {
+        return ResponseEntity.ok(authService.checkNicknameDuplicate(nickname));
+    }
 
     private void addTokensToResponse(HttpServletResponse response, String userId, AuthRole role) {
         String bearerAccessToken = authService.createBearerToken(userId, "access", role, 1000 * 60 * 60 * 24L);  //TODO: 10분으로 변경

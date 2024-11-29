@@ -98,4 +98,8 @@ public class AuthService {
     public void deleteRefreshToken(String userId) {
         refreshTokenRepository.deleteById(userId);
     }
+
+    public boolean checkNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
 }
