@@ -151,4 +151,20 @@ public interface UserApi {
                             content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> deleteUser(String userId);
+
+
+    @Operation(summary = "사용자 전체 목록 조회", description = "닉네임, 이메일이 입력되면 해당 내용이 포함된 사용자를 반환하고 없으면 전체 사용자 목록을 반환한다.",
+            parameters = {
+                    @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0)", schema = @Schema(type = "integer")),
+                    @Parameter(name = "size", description = "페이지 당 데이터 개수 (기본값: 10)", schema = @Schema(type = "integer")),
+                    @Parameter(name = "input", description = "사용자 닉네임 or 이메일", schema = @Schema(type = "String"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "전체 사용자 조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "전체 사용자 조회 실패.",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json"))
+            })
+    ResponseEntity<?> getUserList(int page, int size, String input);
 }
