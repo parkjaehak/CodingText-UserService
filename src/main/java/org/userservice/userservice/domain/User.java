@@ -37,7 +37,8 @@ public class User extends BaseEntity {
     private String profileUrl = " /profileImg1.png";
 
     @Column(name = "profile_message")
-    private String profileMessage;
+    @Builder.Default
+    private String profileMessage = "안녕하세요!";
 
     @Column(name = "total_score")
     @Builder.Default
