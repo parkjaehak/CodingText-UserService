@@ -28,56 +28,60 @@ ext {
 }
 
 dependencies {
-	//Spring
+	//spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' //활성화시 spring security 의 default 비번 uuid 생성안됨
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	//Kubernetes
+	//kubernetes
 	//implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
 
-	//JWT
+	//json web token
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-	//MSA
+	//micro service architecture
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
-	//Lombok
+	//lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	//DB
+	//mysql
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
-	//Redis
+	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	//Flyway
+	//flyway
 	implementation 'org.flywaydb:flyway-mysql'
 	implementation 'org.flywaydb:flyway-core'
 
-	//QueryDsl
+	//query dsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-	//s3 (Kakao object storage, MinIO)
+	//s3 (kakao object storage, MinIO)
 	implementation platform('software.amazon.awssdk:bom:2.23.7')
 	implementation 'software.amazon.awssdk:s3'
 	implementation 'io.minio:minio:8.0.2'
 
 
-	//Swagger
+	//swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+	//actuator, prometheus
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-	//Test
+
+	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
