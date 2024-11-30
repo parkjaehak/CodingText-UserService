@@ -220,4 +220,38 @@ public class UserService {
                 .registerDate(user.getCreatedAt().toLocalDate())
                 .build());
     }
+
+    @Transactional
+    public String initNickName(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        String newNickName = generateUniqueNickName();
+        userRepository.save(user.toBuilder().nickName(newNickName).build());
+        return newNickName;
+    }
+
+    @Transactional
+    public String initProfileImage(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        userRepository.save(user.toBuilder().profileUrl("/profileImg1.png").build());
+        return "/profileImg1.png";
+    }
+
+    @Transactional
+    public String initStatusMessage(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        userRepository.save(user.toBuilder().profileMessage("안녕하세요!").build());
+        return "안녕하세요!";
+    }
+
+    private String generateUniqueNickName() {
+        String newNickName;
+        do {
+            int randomNumber = (int) (Math.random() * (90000)) + 10000;
+            newNickName = "닉네임" + randomNumber;
+        } while (userRepository.existsByNickName(newNickName));
+        return newNickName;
+    }
 }

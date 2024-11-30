@@ -88,4 +88,18 @@ public class UserController implements UserApi {
         Page<UserListResponse> userList = userService.getUserList(page, size, input);
         return ResponseEntity.ok(userList);
     }
+
+    //초기화
+    @PostMapping("/init/nickname")
+    public ResponseEntity<?> initNickName(@RequestHeader("UserId") String userId) {
+        return ResponseEntity.ok( userService.initNickName(userId));
+    }
+    @PostMapping("/init/profile")
+    public ResponseEntity<?> initProfileImage(@RequestHeader("UserId") String userId) {
+        return ResponseEntity.ok( userService.initProfileImage(userId));
+    }
+    @PostMapping("/init/message")
+    public ResponseEntity<?> initStatusMessage(@RequestHeader("UserId") String userId) {
+        return ResponseEntity.ok( userService.initStatusMessage(userId));
+    }
 }

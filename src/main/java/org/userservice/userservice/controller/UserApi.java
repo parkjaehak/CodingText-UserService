@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
@@ -167,4 +169,30 @@ public interface UserApi {
                             content = @Content(mediaType = "application/json"))
             })
     ResponseEntity<?> getUserList(int page, int size, String input);
+
+
+
+    @Operation(summary = "닉네임 초기화", description = "닉네임12345 의 형식으로 초기화를 진행한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "초기화 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json"))
+            })
+    public ResponseEntity<?> initNickName(String userId);
+
+    @Operation(summary = "프로필 사진 초기화", description = "/profileImg1.png 로 초기화를 진행한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "초기화 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json"))
+            })
+    public ResponseEntity<?> initProfileImage(String userId);
+
+    @Operation(summary = "프로필 메세지 초기화", description = "안녕하세요! 로 초기화를 진행한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "초기화 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json"))
+            })
+    public ResponseEntity<?> initStatusMessage(String userId);
 }
