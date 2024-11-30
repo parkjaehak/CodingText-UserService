@@ -171,6 +171,15 @@ public interface UserApi {
     ResponseEntity<?> getUserList(int page, int size, String input);
 
 
+    @Operation(summary = "사용자 관리 조회", description = "관리자 서비스에서 초기화 작업을 진행하기 위한 사용자 정보 조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoForAdminResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류",
+                            content = @Content(mediaType = "application/json"))
+            })
+    public ResponseEntity<?> getUserInfosForAdminService(String userId);
+
 
     @Operation(summary = "닉네임 초기화", description = "닉네임12345 의 형식으로 초기화를 진행한다.",
             responses = {

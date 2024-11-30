@@ -18,6 +18,7 @@ import org.userservice.userservice.controller.feignclient.AdminServiceClient;
 import org.userservice.userservice.domain.User;
 import org.userservice.userservice.dto.adminclient.AnnounceDetailResponse;
 import org.userservice.userservice.dto.adminclient.AnnounceResponse;
+import org.userservice.userservice.dto.blogclient.BlogServiceResponse;
 import org.userservice.userservice.dto.codebankclient.UserScoreRequest;
 import org.userservice.userservice.dto.user.UserInfoForBlogResponse;
 import org.userservice.userservice.dto.user.UserInfoRequest;
@@ -74,7 +75,7 @@ public class UserService {
         Long blogId = null;
         if (socialLoginProfile.equals("dev")) {
             try {
-                ResponseEntity<Long> response = blogServiceClient.findBlog(user.getUserId());
+                ResponseEntity<Long> response = blogServiceClient.findBlogId(user.getUserId());
                 blogId = response.getBody();
                 if (blogId == null) {
                     throw new BlogFindException("블로그 아이디가 없습니다.");
@@ -253,5 +254,33 @@ public class UserService {
             newNickName = "닉네임" + randomNumber;
         } while (userRepository.existsByNickName(newNickName));
         return newNickName;
+    }
+
+    public UserInfoForAdminResponse findUserInfosForAdminService(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        long blogId = 0;
+        String blogIntro = null;
+        if (socialLoginProfile.equals("dev")) {
+            try {
+                ResponseEntity<BlogServiceResponse> response = blogServiceClient.findBlogIdAndIntro(user.getUserId());
+                BlogServiceResponse.BlogData data = response.getBody().getData();
+                blogId = data.getBlogId();
+                blogIntro = data.getMainContent();
+            } catch (FeignException e) {
+                throw new BlogFindException("블로그 조회 요청 중 예외 발생: " + e.getMessage());
+            }
+        }
+
+        return UserInfoForAdminResponse.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickName(user.getNickName())
+                .profileUrl(user.getProfileUrl())
+                .profileMessage(user.getProfileMessage())
+                .blogId(blogId)
+                .blogIntro(blogIntro)
+                .build();
     }
 }

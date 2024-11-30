@@ -32,7 +32,8 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/userInfo")
-    public ResponseEntity<?> findUserInfos(@RequestHeader("UserId") String userId) {;
+    public ResponseEntity<?> findUserInfos(@RequestHeader("UserId") String userId) {
+        ;
         return ResponseEntity.ok(userService.findUserInfoByUserId(userId));
     }
 
@@ -57,11 +58,12 @@ public class UserController implements UserApi {
     public ResponseEntity<Page<AnnounceResponse>> getAnnouncementsFromAdminService(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAnnouncementsFromAdminService(page,size));
+        return ResponseEntity.ok(userService.getAnnouncementsFromAdminService(page, size));
     }
+
     @Override
     @GetMapping("/announce/{announceId}")
-    public ResponseEntity<?> getAnnouncementDetailsFromAdminService(@PathVariable long announceId){
+    public ResponseEntity<?> getAnnouncementDetailsFromAdminService(@PathVariable long announceId) {
         return ResponseEntity.ok(userService.getAnnouncementDetailsFromAdminService(announceId));
     }
 
@@ -90,16 +92,23 @@ public class UserController implements UserApi {
     }
 
     //초기화
+    @GetMapping("/init/{userId}")
+    public ResponseEntity<?> getUserInfosForAdminService(@PathVariable("userId") String userId) {
+        return ResponseEntity.ok(userService.findUserInfosForAdminService(userId));
+    }
+
     @PostMapping("/init/nickname")
-    public ResponseEntity<?> initNickName(@RequestHeader("UserId") String userId) {
-        return ResponseEntity.ok( userService.initNickName(userId));
+    public ResponseEntity<?> initNickName(@RequestParam("UserId") String userId) {
+        return ResponseEntity.ok(userService.initNickName(userId));
     }
+
     @PostMapping("/init/profile")
-    public ResponseEntity<?> initProfileImage(@RequestHeader("UserId") String userId) {
-        return ResponseEntity.ok( userService.initProfileImage(userId));
+    public ResponseEntity<?> initProfileImage(@RequestParam("UserId") String userId) {
+        return ResponseEntity.ok(userService.initProfileImage(userId));
     }
+
     @PostMapping("/init/message")
-    public ResponseEntity<?> initStatusMessage(@RequestHeader("UserId") String userId) {
-        return ResponseEntity.ok( userService.initStatusMessage(userId));
+    public ResponseEntity<?> initStatusMessage(@RequestParam("UserId") String userId) {
+        return ResponseEntity.ok(userService.initStatusMessage(userId));
     }
 }
