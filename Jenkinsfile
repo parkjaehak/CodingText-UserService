@@ -5,12 +5,13 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "atom8426/ct-userservice-dev"
+        IMAGE_NAME = "hurraypersimmon/codingtext"
+        IMAGE_TAG = "userservice"
         APP_NAME = "ct-userservice-app"
-        TARGET_HOST = "config@172.16.211.116"
-        SSH_CREDENTIALS = "jenkins-ssh"
+        TARGET_HOST = "s112@172.16.211.112"
+        SSH_CREDENTIALS = "jenkins_private_key"
         ACTIVE_PROFILE = "dev"
-        CONFIG_SERVER_URL = "172.16.211.116:9000"
+        CONFIG_SERVER_URL = "172.16.211.110:9000"
     }
 
     stages {
@@ -35,12 +36,14 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
-                    withCredentials([usernamePassword(credentialsId: 'docker_credential_id', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        sh '''
-                            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                            docker push "${IMAGE_NAME}:latest"
-                        '''
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    withCredentials([usernamePassword(credentialsId: 'ct-dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        docker.withRegistry('https://index.docker.io/v1/', 'ct-dockerhub') {
+                            sh '''
+                                echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                                docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+                            '''
+                        }
                     }
                 }
             }
@@ -52,13 +55,13 @@ pipeline {
                     sshagent(credentials: [SSH_CREDENTIALS]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${TARGET_HOST} '
-                                docker pull ${IMAGE_NAME}:latest
+                                docker pull ${IMAGE_NAME}:${IMAGE_TAG}
                                 docker stop ${APP_NAME} || true
                                 docker rm ${APP_NAME} || true
                                 docker run -d --restart always --network host --name ${APP_NAME} \
                                   --env ACTIVE_PROFILE=${ACTIVE_PROFILE} \
                                   --env CONFIG_SERVER_URL=${CONFIG_SERVER_URL} \
-                                  ${IMAGE_NAME}:latest
+                                  ${IMAGE_NAME}:${IMAGE_TAG}
                             '
                         """
                     }
