@@ -56,6 +56,19 @@ public class UserService {
         long newUserRank = redisRepository.getUserRank(userId);
         userRepository.save(user.toBuilder().userRank(newUserRank).build());
 
+        Long blogId = null;
+        if (socialLoginProfile.equals("dev")) {
+            try {
+                ResponseEntity<Long> response = blogServiceClient.findBlogId(user.getUserId());
+                blogId = response.getBody();
+                if (blogId == null) {
+                    throw new BlogFindException("블로그 아이디가 없습니다.");
+                }
+            } catch (FeignException e) {
+                throw new BlogFindException("블로그 조회 요청 중 예외 발생: " + e.getMessage());
+            }
+        }
+
         return UserStatisticResponse.builder()
                 .userId(user.getUserId())
                 .nickName(user.getNickName())
@@ -65,6 +78,7 @@ public class UserService {
                 .rank(newUserRank)
                 .profileUrl(user.getProfileUrl())
                 .tier(user.getTier())
+                .blogId(blogId)
                 .build();
     }
 
