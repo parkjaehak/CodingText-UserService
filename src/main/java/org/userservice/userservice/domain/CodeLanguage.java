@@ -9,7 +9,7 @@ public enum CodeLanguage {
     JAVA("java"),
     PYTHON("python"),
     C("c"),
-    C_PLUS_PLUS("c++"),
+    C_PLUS_PLUS("c_plus_plus"),
     JAVASCRIPT("javascript"),
     RUBY("ruby"),
     SWIFT("swift"),

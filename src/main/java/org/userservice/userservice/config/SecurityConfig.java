@@ -42,7 +42,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/webjars/**", "/favicon.ico", "/webjars/**", "/error",
+                        .requestMatchers("/webjars/**", "/favicon.ico", "/error",
                                 "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         .requestMatchers("/auth/**", "/users/**", "/", "/health","/logout", "/actuator/**", "/login/oauth2/code/*").permitAll()
                         .anyRequest().authenticated());

@@ -62,6 +62,7 @@ pipeline {
                                   --env ACTIVE_PROFILE=${ACTIVE_PROFILE} \
                                   --env CONFIG_SERVER_URL=${CONFIG_SERVER_URL} \
                                   ${IMAGE_NAME}:${IMAGE_TAG}
+                                docker system prune -a -f
                             '
                         """
                     }
