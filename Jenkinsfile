@@ -54,6 +54,8 @@ pipeline {
                 script {
                     sshagent(credentials: [SSH_CREDENTIALS]) {
                         sh """
+                            docker system prune -a -f
+
                             ssh -o StrictHostKeyChecking=no ${TARGET_HOST} '
                                 docker pull ${IMAGE_NAME}:${IMAGE_TAG}
                                 docker stop ${APP_NAME} || true
