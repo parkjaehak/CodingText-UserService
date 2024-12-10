@@ -10,16 +10,16 @@ pipeline {
         APP_NAME = "ct-userservice-app"
         TARGET_HOST = "s112@172.16.211.112"
         SSH_CREDENTIALS = "jenkins_private_key"
-        ACTIVE_PROFILE = "dev"
+        ACTIVE_PROFILE = "prod"
         CONFIG_SERVER_URL = "172.16.211.110:9000"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'develop',
+                git branch: 'main',
                     credentialsId: 'github_access_token',
-                    url: 'https://github.com/Xeat-KEA/UserService.git'
+                    url: 'https://github.com/Xeat-KEA/user-service.git'
             }
         }
 
