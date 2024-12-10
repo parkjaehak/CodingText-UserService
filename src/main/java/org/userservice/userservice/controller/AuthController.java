@@ -28,6 +28,7 @@ public class AuthController implements AuthApi {
     private final AuthService authService;
     private final BlogServiceClient blogServiceClient;
 
+    // cookie-to-header 및 prod-signup 은 on prem 환경에서 사용하지 않는다.
     @Override
     @GetMapping("/cookie-to-header")
     public ResponseEntity<?> cookieToHeader(

@@ -57,7 +57,7 @@ public class UserService {
         userRepository.save(user.toBuilder().userRank(newUserRank).build());
 
         Long blogId = null;
-        if (socialLoginProfile.equals("dev")) {
+        if (socialLoginProfile.equals("dev") || socialLoginProfile.equals("prod")) {
             try {
                 ResponseEntity<Long> response = blogServiceClient.findBlogId(user.getUserId());
                 blogId = response.getBody();
@@ -87,7 +87,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         Long blogId = null;
-        if (socialLoginProfile.equals("dev")) {
+        if (socialLoginProfile.equals("dev") || socialLoginProfile.equals("prod")) {
             try {
                 ResponseEntity<Long> response = blogServiceClient.findBlogId(user.getUserId());
                 blogId = response.getBody();
@@ -206,7 +206,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        if (socialLoginProfile.equals("dev")) {
+        if (socialLoginProfile.equals("dev") || socialLoginProfile.equals("prod")) {
             try {
                 blogServiceClient.deleteBlog(userId);
             } catch (FeignException e) {
@@ -276,7 +276,7 @@ public class UserService {
 
         long blogId = 0;
         String blogIntro = null;
-        if (socialLoginProfile.equals("dev")) {
+        if (socialLoginProfile.equals("dev") || socialLoginProfile.equals("prod")) {
             try {
                 ResponseEntity<BlogServiceResponse> response = blogServiceClient.findBlogIdAndIntro(user.getUserId());
                 BlogServiceResponse.BlogData data = response.getBody().getData();

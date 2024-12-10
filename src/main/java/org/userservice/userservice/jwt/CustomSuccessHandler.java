@@ -45,16 +45,22 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String accessToken = jwtProvider.createToken(providerName, "access", role, 1000 * 60 * 60 * 24L); //TODO: 10분으로 변경
         String refreshToken = jwtProvider.createToken(providerName, "refresh", role,1000 * 60 * 60 * 24L); //24시간
 
-        if (socialLoginProfile.equals("dev")) {
+        if (socialLoginProfile.equals("prod")) {
+            if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
+                response.sendRedirect("http://프론트주소:3000/auth?access=" + accessToken + "&signedIn=false");
+            } else {
+                authService.saveRefreshToken(providerName, "Bearer " + refreshToken);
+                response.sendRedirect("http://프론트주소:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer " + refreshToken + "&userId=" + providerName + "&signedIn=true");
+            }
+        } else if (socialLoginProfile.equals("dev")) {
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
                 response.sendRedirect("http://localhost:3000/auth?access=" + accessToken + "&signedIn=false");
             } else {
                 authService.saveRefreshToken(providerName, "Bearer " + refreshToken);
-                response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer "+ refreshToken + "&userId=" + providerName + "&signedIn=true");
+                response.sendRedirect("http://localhost:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer " + refreshToken + "&userId=" + providerName + "&signedIn=true");
             }
-
         } else if (socialLoginProfile.equals("local")) {
-            response.addCookie(CookieUtils.createCookie("Authorization", accessToken, 60*60*24)); //24시간
+            response.addCookie(CookieUtils.createCookie("Authorization", accessToken, 60 * 60 * 24)); //24시간
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
                 response.sendRedirect("http://localhost:8080/auth/prod/signup");
             } else {
