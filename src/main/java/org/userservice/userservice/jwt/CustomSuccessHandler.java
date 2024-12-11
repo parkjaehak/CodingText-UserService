@@ -47,10 +47,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (socialLoginProfile.equals("prod")) {
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
-                response.sendRedirect("http://프론트주소:3000/auth?access=" + accessToken + "&signedIn=false");
+                response.sendRedirect("http://172.16.211.54:3000/auth?access=" + accessToken + "&signedIn=false");
             } else {
                 authService.saveRefreshToken(providerName, "Bearer " + refreshToken);
-                response.sendRedirect("http://프론트주소:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer " + refreshToken + "&userId=" + providerName + "&signedIn=true");
+                response.sendRedirect("http://172.16.211.54:3000/auth?access=Bearer " + accessToken + "&refresh=Bearer " + refreshToken + "&userId=" + providerName + "&signedIn=true");
             }
         } else if (socialLoginProfile.equals("dev")) {
             if (role.equals(String.valueOf(AuthRole.ROLE_USER_A))) {
