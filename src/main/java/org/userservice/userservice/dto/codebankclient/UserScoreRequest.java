@@ -13,4 +13,7 @@ public class UserScoreRequest {
     private String userId;
     @Schema(description = "획득한 점수", example = "10")
     private int score;
+    @Schema(description = "획득한 점수", example = "10")
+    private int solvedCount;
+
 }

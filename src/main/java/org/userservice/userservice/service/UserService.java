@@ -185,17 +185,18 @@ public class UserService {
     public void calculateTierAndUpdateScore(UserScoreRequest userScoreRequest) {
         User user = userRepository.findById(userScoreRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        int updatedScore = user.getTotalScore() + userScoreRequest.getScore();
-        int updatedSolvedCount = user.getSolvedCount() + 1;
-        Tier newTier = Tier.fromScore(updatedScore);
+        int score = userScoreRequest.getScore();
+        int solvedCount = userScoreRequest.getSolvedCount();
+
+        Tier newTier = Tier.fromScore(score);
 
         //redis 에서 사용자 점수 업데이트 후 전체 순위를 다시 계산
-        redisRepository.updateScore(userScoreRequest.getUserId(), updatedScore, updatedSolvedCount);
+        redisRepository.updateScore(userScoreRequest.getUserId(), score, solvedCount);
         long userRank = redisRepository.getUserRank(userScoreRequest.getUserId());
 
         userRepository.save(user.toBuilder()
-                .totalScore(updatedScore)
-                .solvedCount(updatedSolvedCount)
+                .totalScore(score)
+                .solvedCount(solvedCount)
                 .userRank(userRank)
                 .tier(newTier)
                 .build());
