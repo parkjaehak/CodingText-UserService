@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.userservice.userservice.controller.feignclient.BlogServiceClient;
+import org.userservice.userservice.controller.feignclient.CodeBankServiceClient;
 import org.userservice.userservice.domain.Tier;
 import org.userservice.userservice.dto.adminclient.CustomPageImpl;
 import org.userservice.userservice.controller.feignclient.AdminServiceClient;
@@ -26,7 +27,7 @@ import org.userservice.userservice.dto.user.UserInfoResponse;
 import org.userservice.userservice.dto.user.UserStatisticResponse;
 import org.userservice.userservice.dto.user.*;
 import org.userservice.userservice.error.ErrorCode;
-import org.userservice.userservice.error.exception.BlogDeletionException;
+import org.userservice.userservice.error.exception.DeletionException;
 import org.userservice.userservice.error.exception.BlogFindException;
 import org.userservice.userservice.error.exception.BusinessException;
 import org.userservice.userservice.error.exception.UserNotFoundException;
@@ -43,6 +44,7 @@ public class UserService {
     private final MinioFileUploadService minioFileUploadService;
     private final AdminServiceClient adminServiceClient;
     private final BlogServiceClient blogServiceClient;
+    private final CodeBankServiceClient codeBankServiceClient;
     @Value("${social.login.profile}")
     private String socialLoginProfile;
     private final RedisRepository redisRepository;
@@ -210,10 +212,12 @@ public class UserService {
         if (socialLoginProfile.equals("dev") || socialLoginProfile.equals("prod")) {
             try {
                 blogServiceClient.deleteBlog(userId);
+                codeBankServiceClient.deleteCodeHistory(userId);
             } catch (FeignException e) {
-                throw new BlogDeletionException("블로그 삭제 요청 중 예외 발생: " + e.getMessage());
+                throw new DeletionException("서비스 호출 중 예외 발생: " + e.getMessage());
             }
         }
+
         redisRepository.deleteUserScore(userId); //회원탈퇴시 redis에 저장된 score 및 refresh token 삭제
         refreshTokenRepository.deleteById(userId);
 
