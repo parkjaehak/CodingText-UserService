@@ -41,7 +41,6 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("리소스 서버로부터 인증된 유저는? = {}", oAuth2User);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
         OAuth2Response oAuth2Response = getOAuth2Response(registrationId, oAuth2User.getAttributes());
