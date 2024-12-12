@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(name = "code-bank-service")
 public interface CodeBankServiceClient {
     @DeleteMapping("/user")
-    ResponseEntity<?> deleteCodeHistory(@RequestHeader("UserId") String userId);
+    ResponseEntity<String> deleteCodeHistory(@RequestHeader("UserId") String userId);
 }
